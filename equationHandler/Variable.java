@@ -9,6 +9,8 @@ import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
 
+import testing.Config;
+
 public class Variable extends Operand {
 
 	public Variable(String name) {
@@ -23,8 +25,8 @@ public class Variable extends Operand {
 		try {
 			Class.forName("oracle.jdbc.driver.OracleDriver");
 			Connection con = DriverManager.getConnection("jdbc:oracle:thin:@srv_oracle_prod:1521/bdenerdata.enerdata", 
-					"hamme", 
-					"emmanuel");
+					Config.login, 
+					Config.password);
 			Statement stmt = con.createStatement();
 			String query = "SELECT tyear, valeur "
 					+ "FROM Valeurs_tab "

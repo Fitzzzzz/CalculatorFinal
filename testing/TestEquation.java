@@ -23,14 +23,18 @@ public class TestEquation {
 		System.out.println(tokenParser.getLList(tokenParser.getOutput()));
 		TreeBuilder tree = new TreeBuilder(tokenParser.getOutput());
 		TreePrinter.print(tree.getTree());
-		System.out.print("sol = " + tree.postOrderEvaluation(57));
+		System.out.println("sol = " + tree.postOrderEvaluation(57));
 		
 		
 		try {
+			
+			
+			int end = 15;
+			
 			Class.forName("oracle.jdbc.driver.OracleDriver");
 			Connection con = DriverManager.getConnection("jdbc:oracle:thin:@srv_oracle_prod:1521/bdenerdata.enerdata", 
-					"hamme", 
-					"emmanuel");
+					Config.login, 
+					Config.password);
 			Statement stmt = con.createStatement();
 			String query = "SELECT tyear, valeur "
 					+ "FROM Valeurs_tab "
@@ -40,11 +44,11 @@ public class TestEquation {
 					+ "ORDER BY tyear";
 			
 			ResultSet rs = stmt.executeQuery(query);
+			for (int i = 0; i < end; i++) 
+			rs.next();
+			System.out.print(rs.getInt(1) + "   ");
+			System.out.println(rs.getBigDecimal(2));
 			
-			while (rs.next()) {
-				System.out.print(rs.getInt(1) + "   ");
-				System.out.println(rs.getBigDecimal(2));
-			}
 			
 			query = "SELECT tyear, valeur "
 					+ "FROM Valeurs_tab "
@@ -52,13 +56,13 @@ public class TestEquation {
 					+ "gnacfnen"
 					+ "' AND code_pays = 'fra' AND unite = 'Mm3') "
 					+ "ORDER BY tyear";
-			
+		
 			rs = stmt.executeQuery(query);
+			for (int i = 0; i < end; i++) 
+			rs.next();
+			System.out.print(rs.getInt(1) + "   ");
+			System.out.println(rs.getBigDecimal(2));
 			
-			while (rs.next()) {
-				System.out.print(rs.getInt(1) + "   ");
-				System.out.println(rs.getBigDecimal(2));
-			}
 			
 			query = "SELECT tyear, valeur "
 					+ "FROM Valeurs_tab "
@@ -69,10 +73,11 @@ public class TestEquation {
 			
 			rs = stmt.executeQuery(query);
 			
-			while (rs.next()) {
+			for (int i = 0; i < end; i++) 
+			rs.next();
 				System.out.print(rs.getInt(1) + "   ");
 				System.out.println(rs.getBigDecimal(2));
-			}
+			
 			
 			
 		} catch (ClassNotFoundException e) {

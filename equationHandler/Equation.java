@@ -13,6 +13,7 @@ import java.util.Set;
 import java.util.Vector;
 
 import binaryTree.TreeBuilder;
+import testing.Config;
 public class Equation {
 
 	public static PriorityToken PLUS = new Operator("+", 1);
@@ -187,8 +188,8 @@ public class Equation {
 		try {
 			Class.forName("oracle.jdbc.driver.OracleDriver");
 			Connection con = DriverManager.getConnection("jdbc:oracle:thin:@srv_oracle_prod:1521/bdenerdata.enerdata", 
-					"hamme", 
-					"emmanuel");
+					Config.login, 
+					Config.password);
 			Statement stmt = con.createStatement();
 			String query = "SELECT tyear, valeur "
 					+ "FROM Valeurs_tab "
@@ -198,7 +199,7 @@ public class Equation {
 					+ "ORDER BY tyear";
 			
 			System.out.println(query);
-			ResultSet 	rs = stmt.executeQuery(query);
+			ResultSet rs = stmt.executeQuery(query);
 			
 			
 			while (rs.next()) {
@@ -223,8 +224,8 @@ public class Equation {
 		try {
 			Class.forName("oracle.jdbc.driver.OracleDriver");
 			Connection con = DriverManager.getConnection("jdbc:oracle:thin:@srv_oracle_prod:1521/bdenerdata.enerdata", 
-					"hamme", 
-					"emmanuel");
+					Config.login, 
+					Config.password);
 			Statement stmt = con.createStatement();
 			String query = "SELECT tyear "
 					+ "FROM Valeurs_tab "
@@ -270,7 +271,7 @@ public class Equation {
 		BigDecimal diff;
 		while (itr.hasNext()) {
 			Integer year = itr.next();
-			diff = bodyMap.get(year).subtract(bodyMap.get(year));
+			diff = receiverMap.get(year).subtract(bodyMap.get(year));
 			differenceMap.put(year, diff);
 			
 			// if the difference between the expected result and the result is smaller or equal to 0.5
