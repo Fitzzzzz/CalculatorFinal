@@ -9,17 +9,24 @@ public class TestGnacfinn {
 
 	public static void main(String[] args) {
 		
-		String equation = "gnacfinn=gnacfind+gnacfnen";
+		String equation = "ethpd-(ecmpd+eptpd+egzpd+ebipd+evapd)=0";
 		String codePays = "fra";
-		Equation eq = new Equation(equation);
+		
+		
+		
+		
+		Equation eq = new Equation(equation, codePays, "GWh");
 		Parser tokenParser = new Parser(eq.getTokens());
 //		System.out.println(tokenParser.getLList(tokenParser.getOutput()));
 		TreeBuilder tree = new TreeBuilder(tokenParser.getOutput());
 		TreePrinter.print(tree.getTree());
 //		System.out.print("sol = " + tree.postOrderEvaluation(2010));
-		eq.queryReceiverValue();
 		eq.queryBodyValue(tree);
-		eq.compare();
-		eq.printComparaison();
+//		eq.compare();		 NOT FINISHED
+//		eq.printComparaison(); NOT FINISHED
+		eq.printBody();
+		// RAJOUTER eq.printMISSING() TODO : 
+		
+		
 	}
 }

@@ -2,6 +2,8 @@ package equationHandler;
 
 import java.math.BigDecimal;
 
+import databaseQueries.UnexpectedMissingValue;
+
 public abstract class Operand extends Token{
 
 	public Operand(String op) {
@@ -10,7 +12,7 @@ public abstract class Operand extends Token{
 
 	}
 	
-	public abstract BigDecimal getValue(int year);
+	public abstract BigDecimal getValue(int year) throws UnexpectedMissingValue;
 
 	
 	

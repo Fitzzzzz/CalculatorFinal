@@ -3,6 +3,7 @@ package binaryTree;
 import java.math.BigDecimal;
 import java.util.LinkedList;
 
+import databaseQueries.UnexpectedMissingValue;
 import equationHandler.Operand;
 import equationHandler.Token;
 
@@ -15,7 +16,7 @@ public class TreeBuilder {
 		System.out.println(list);
 		this.tree = new Node();
 		constructTree(list, tree);
-		System.out.println(list);
+//		System.out.println(list);
 //		System.out.println("result = " + postOrderEvaluation(tree, 5));
 		
 	}
@@ -57,17 +58,24 @@ public class TreeBuilder {
 	}
 	/**
 	 * Is actually a reverse post-order evaluation...
+	 * @throws UnexpectedMissingValue 
 	 */
-	public BigDecimal postOrderEvaluation(Integer year) {
+	public BigDecimal postOrderEvaluation(Integer year) throws UnexpectedMissingValue {
 		
 		Node node = this.tree;
-		System.out.print(node.getValue().getName());
+		System.out.println(node.getValue().getName());
 		
 		if (node.getValue().getType() == 0) {
 			return ((Operand) (node.getValue())).getValue(year);
 		}
+		System.out.println("Current node = " + node.getValue().getName());
+
 		BigDecimal rightValue = postOrderEvaluation(node.getRightSon(), year);
+		System.out.println("Current node = " + node.getValue().getName());
+
 		BigDecimal leftValue = postOrderEvaluation(node.getLeftSon(), year);
+		System.out.println("Current node = " + node.getValue().getName());
+
 		switch (node.getValue().getName()) {
 		case "+": 
 			return rightValue.add(leftValue);
@@ -91,18 +99,24 @@ public class TreeBuilder {
 	
 	/**
 	 * Is actually a reverse post-order evaluation...
+	 * @throws UnexpectedMissingValue 
 	 */
-	public static BigDecimal postOrderEvaluation(Node node, Integer year) {
+	public static BigDecimal postOrderEvaluation(Node node, Integer year) throws UnexpectedMissingValue {
 		
-		System.out.print(node.getValue().getName());
-		
+		System.out.println("Current node = " + node.getValue().getName());
+
 		if (node.getValue().getType() == 0) {
 			return ((Operand) (node.getValue())).getValue(year);
 		}
+		System.out.println("Current node = " + node.getValue().getName());
 		BigDecimal rightValue = postOrderEvaluation(node.getRightSon(), year);
+		System.out.println("Current node = " + node.getValue().getName());
 		BigDecimal leftValue = postOrderEvaluation(node.getLeftSon(), year);
+		System.out.println("Current node = " + node.getValue().getName());
+
 		switch (node.getValue().getName()) {
 		case "+": 
+			System.out.println("rightvalue = " + rightValue.toString() + " leftvalue = " + leftValue.toString());
 			return rightValue.add(leftValue);
 			
 		case "-":

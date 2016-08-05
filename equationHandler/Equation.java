@@ -7,12 +7,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
 import binaryTree.TreeBuilder;
+import databaseQueries.UnexpectedMissingValue;
 import testing.Config;
 public class Equation {
 
@@ -23,12 +25,18 @@ public class Equation {
 	public static PriorityToken OPENPARENTHESES = new Parenthesis("(" , 4, true);
 	public static PriorityToken CLOSEPARENTHESES = new Parenthesis(")", 4, false);
 	
-	public Equation(String equation) {
+	private String country;
+	private String unit;
+	
+	public Equation(String equation, String country, String unit) {
+		
+		this.country = country;
+		this.unit = unit;
 		
 		this.equation = equation;
 		String[] parts = equation.split("=");
-		this.receiver = parts[0];
-		this.body = parts[1];
+		this.receiver = parts[1];
+		this.body = parts[0];
 		String[] tmp = {body};
 		
 		tmp = this.split(tmp, PLUS);	
@@ -53,7 +61,13 @@ public class Equation {
 		}
 		System.out.println("");
 		
-		this.queryReceiverValue();
+		if (receiver.equals("0")) {
+			System.out.println("receiver equals 0, using " + tmp[0]);			
+			this.queryYears(tmp[0]);
+		}
+		else {
+			this.queryReceiverValue();
+		}
 		
 		
 	}
@@ -95,9 +109,19 @@ public class Equation {
 	
 	private Set<Integer> years;
 	
- 	private final Map<Integer, Boolean> resultMap = new HashMap<Integer, Boolean>();
+ 	public Set<Integer> getYears() {
+		return years;
+	}
+
+	public void setYears(Set<Integer> years) {
+		this.years = years;
+	}
+
+	private final Map<Integer, Boolean> resultMap = new HashMap<Integer, Boolean>();
 
  	private final Map<Integer, BigDecimal> differenceMap = new HashMap<Integer, BigDecimal>();
+ 	
+ 	private final Map<String, Set<Integer>> missingValues = new HashMap<String, Set<Integer>>();
 
 
 	private String[] split(String[] toSplit, PriorityToken separator) {
@@ -172,7 +196,7 @@ public class Equation {
 					int value = Integer.parseInt(toConvert[i]);
 					converted[i] = new Constant(toConvert[i], value);
 				} catch (NumberFormatException e) {
-					converted[i] = new Variable(toConvert[i]);
+					converted[i] = new Variable(toConvert[i], this.country, this.unit);
 				}
 			
 			}
@@ -183,7 +207,7 @@ public class Equation {
 	}
 	
 	
-	// To use only if it's an equation, not a calculation.
+	// To use only if it's an equation, not a calculation (receiver is a serie)
 	public void queryReceiverValue() {
 		try {
 			Class.forName("oracle.jdbc.driver.OracleDriver");
@@ -195,12 +219,15 @@ public class Equation {
 					+ "FROM Valeurs_tab "
 					+ "WHERE Ticker = (SELECT numero FROM Series WHERE Code_serie = '"
 					+ this.getReceiver()
-					+ "' AND code_pays = 'fra' AND unite = 'Mm3') "
+					+ "' AND code_pays = '" + this.country + "'"
+					+ "AND unite = '"
+					+ unit
+					+ "') "
 					+ "ORDER BY tyear";
 			
 			System.out.println(query);
 			ResultSet rs = stmt.executeQuery(query);
-			
+
 			
 			while (rs.next()) {
 				
@@ -209,7 +236,8 @@ public class Equation {
 			}	
 			
 			years = receiverMap.keySet();
-			
+			con.close();
+
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -219,7 +247,8 @@ public class Equation {
 		}
 	}
 	
-	// To get the years
+	// To get the years : use only if receiver is a serie
+	// VERY PROBABLY WILL CAUSE NULL EXCEPTION BECAUSE YEARS NOT INITIALIZED
 	public void queryYears(TreeBuilder tree) {
 		try {
 			Class.forName("oracle.jdbc.driver.OracleDriver");
@@ -231,19 +260,63 @@ public class Equation {
 					+ "FROM Valeurs_tab "
 					+ "WHERE Ticker = (SELECT numero FROM Series WHERE Code_serie = '"
 					+ this.getReceiver()
-					+ "' AND code_pays = 'fra' AND unite = 'Mm3') "
+					+ "' AND code_pays = '" + this.country + "'"
+					+ "AND unite = '"
+					+ unit
+					+ "') "
 					+ "ORDER BY tyear";
 			
 			System.out.println(query);
 			ResultSet rs = stmt.executeQuery(query);
-			
-			
+
 			while (rs.next()) {
 				
 				years.add(rs.getInt(1));
 				
 			}	
 			
+			con.close();
+
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	private void queryYears(String serie) {
+		try {
+			Class.forName("oracle.jdbc.driver.OracleDriver");
+			Connection con = DriverManager.getConnection("jdbc:oracle:thin:@" + Config.serveur + ":1521/" + Config.database, 
+					Config.login, 
+					Config.password);
+			Statement stmt = con.createStatement();
+			String query = "SELECT tyear "
+					+ "FROM Valeurs_tab "
+					+ "WHERE Ticker = (SELECT numero FROM Series WHERE Code_serie = '"
+					+ serie
+					+ "' AND code_pays = '" + this.country + "' "
+					+ "AND unite = '"
+					+ unit
+					+ "') "
+					+ "ORDER BY tyear";
+			
+			System.out.println(query);
+			System.out.println("-----------*----------------*------------*");
+			ResultSet rs = stmt.executeQuery(query);
+			years = new HashSet<Integer>();
+			while (rs.next()) {
+				
+				System.out.println("Adding a year to years");
+				int year = rs.getInt(1);
+				System.out.println(year);
+				years.add(year);
+				
+			}	
+			con.close();
+
 			
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -254,6 +327,7 @@ public class Equation {
 		}
 	}
 	
+	
 	// queryYears or queryReceiverValue need to have been called
 	// The tree has to be constructed
 	public void queryBodyValue(TreeBuilder tree) {
@@ -261,7 +335,20 @@ public class Equation {
 		Iterator<Integer> itr = years.iterator();
 		while (itr.hasNext()) {
 			Integer year = itr.next();
-			bodyMap.put(year, tree.postOrderEvaluation(year));
+			try {
+				bodyMap.put(year, tree.postOrderEvaluation(year));
+			} catch (UnexpectedMissingValue e) {
+				
+				if (missingValues.get(e.getSerie()) == null) {
+					Set<Integer> missingYears = new HashSet<Integer>();
+					missingYears.add(e.getYear());
+					missingValues.put(e.getSerie(), missingYears);
+				}
+				
+				else {
+					missingValues.get(e.getSerie()).add(e.getYear());
+				}
+			}
 		}
 	}
 	
@@ -276,7 +363,7 @@ public class Equation {
 			
 			// if the difference between the expected result and the result is smaller or equal to 0.5
 			if (diff.abs().compareTo(new BigDecimal(0.5)) <= 0) {
-				resultMap.put(year, true);	
+				resultMap.put(year, true);
 			}
 			// if it's higher
 			else {
@@ -295,5 +382,20 @@ public class Equation {
 		
 	}
 	
+	public void printBody() {
+		
+		Iterator<Integer> itr = years.iterator();
+		while (itr.hasNext()) {
+			Integer year = itr.next();
+			System.out.println(year + " : " + bodyMap.get(year));
+		}
+		
+	}
+	
+	public void printMissingValues() {
+		
+		
+		
+	}
 	
 }
