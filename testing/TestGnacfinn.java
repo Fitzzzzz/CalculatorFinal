@@ -13,7 +13,7 @@ public class TestGnacfinn {
 		String codePays = "fra";
 		Equation eq = new Equation(equation);
 		Parser tokenParser = new Parser(eq.getTokens());
-		System.out.println(tokenParser.getLList(tokenParser.getOutput()));
+//		System.out.println(tokenParser.getLList(tokenParser.getOutput()));
 		TreeBuilder tree = new TreeBuilder(tokenParser.getOutput());
 		TreePrinter.print(tree.getTree());
 //		System.out.print("sol = " + tree.postOrderEvaluation(2010));

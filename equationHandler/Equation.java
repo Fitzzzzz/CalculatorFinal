@@ -187,7 +187,7 @@ public class Equation {
 	public void queryReceiverValue() {
 		try {
 			Class.forName("oracle.jdbc.driver.OracleDriver");
-			Connection con = DriverManager.getConnection("jdbc:oracle:thin:@srv_oracle_prod:1521/bdenerdata.enerdata", 
+			Connection con = DriverManager.getConnection("jdbc:oracle:thin:@" + Config.serveur + ":1521/" + Config.database, 
 					Config.login, 
 					Config.password);
 			Statement stmt = con.createStatement();
@@ -223,7 +223,7 @@ public class Equation {
 	public void queryYears(TreeBuilder tree) {
 		try {
 			Class.forName("oracle.jdbc.driver.OracleDriver");
-			Connection con = DriverManager.getConnection("jdbc:oracle:thin:@srv_oracle_prod:1521/bdenerdata.enerdata", 
+			Connection con = DriverManager.getConnection("jdbc:oracle:thin:@" + Config.serveur + ":1521/" + Config.database, 
 					Config.login, 
 					Config.password);
 			Statement stmt = con.createStatement();

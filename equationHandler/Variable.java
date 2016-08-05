@@ -24,7 +24,7 @@ public class Variable extends Operand {
 	public void queryValue() {
 		try {
 			Class.forName("oracle.jdbc.driver.OracleDriver");
-			Connection con = DriverManager.getConnection("jdbc:oracle:thin:@srv_oracle_prod:1521/bdenerdata.enerdata", 
+			Connection con = DriverManager.getConnection("jdbc:oracle:thin:@" + Config.serveur + ":1521/" + Config.database, 
 					Config.login, 
 					Config.password);
 			Statement stmt = con.createStatement();
