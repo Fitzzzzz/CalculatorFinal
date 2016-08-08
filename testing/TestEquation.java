@@ -9,7 +9,7 @@ import java.sql.Statement;
 import arithmeticParsing.Parser;
 import binaryTree.TreeBuilder;
 import binaryTree.TreePrinter;
-import databaseQueries.UnexpectedMissingValue;
+import databaseQueries.UnexpectedMissingValueException;
 import equationHandler.Equation;
 
 public class TestEquation {
@@ -26,7 +26,7 @@ public class TestEquation {
 		TreePrinter.print(tree.getTree());
 		try {
 			System.out.println("sol = " + tree.postOrderEvaluation(57));
-		} catch (UnexpectedMissingValue e1) {
+		} catch (UnexpectedMissingValueException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}

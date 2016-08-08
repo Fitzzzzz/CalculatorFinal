@@ -14,7 +14,8 @@ import java.util.Set;
 import java.util.Vector;
 
 import binaryTree.TreeBuilder;
-import databaseQueries.UnexpectedMissingValue;
+import databaseQueries.Connector;
+import databaseQueries.UnexpectedMissingValueException;
 import testing.Config;
 public class Equation {
 
@@ -27,6 +28,9 @@ public class Equation {
 	
 	private String country;
 	private String unit;
+	
+	private Connector connect;
+	
 	
 	public Equation(String equation, String country, String unit) {
 		
@@ -45,6 +49,13 @@ public class Equation {
 		tmp = this.split(tmp, DIVIDE);		
 		tmp = this.split(tmp, OPENPARENTHESES);	
 		tmp = this.split(tmp, CLOSEPARENTHESES);	
+		
+		try {
+			connect = new Connector(unit, "fra");
+		} catch (ClassNotFoundException | SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		
 		// TODO : to remove
@@ -212,33 +223,39 @@ public class Equation {
 	// To use only if it's an equation, not a calculation (receiver is a serie)
 	public void queryReceiverValue() {
 		try {
-			Class.forName("oracle.jdbc.driver.OracleDriver");
-			Connection con = DriverManager.getConnection("jdbc:oracle:thin:@" + Config.serveur + ":1521/" + Config.database, 
-					Config.login, 
-					Config.password);
-			Statement stmt = con.createStatement();
-			String query = "SELECT tyear, valeur "
-					+ "FROM Valeurs_tab "
-					+ "WHERE Ticker = (SELECT numero FROM Series WHERE Code_serie = '"
-					+ this.getReceiver()
-					+ "' AND code_pays = '" + this.country + "'"
-					+ "AND unite = '"
-					+ unit
-					+ "') "
-					+ "ORDER BY tyear";
-			
-			System.out.println(query);
-			ResultSet rs = stmt.executeQuery(query);
-
-			
+//			Class.forName("oracle.jdbc.driver.OracleDriver");
+//			Connection con = DriverManager.getConnection("jdbc:oracle:thin:@" + Config.serveur + ":1521/" + Config.database, 
+//					Config.login, 
+//					Config.password);
+//			Statement stmt = con.createStatement();
+//			String query = "SELECT tyear, valeur "
+//					+ "FROM Valeurs_tab "
+//					+ "WHERE Ticker = (SELECT numero FROM Series WHERE Code_serie = '"
+//					+ this.getReceiver()
+//					+ "' AND code_pays = '" + this.country + "'"
+//					+ "AND unite = '"
+//					+ unit
+//					+ "') "
+//					+ "ORDER BY tyear";
+//			
+//			System.out.println(query);
+//			ResultSet rs = stmt.executeQuery(query);
+//
+//			
+//			while (rs.next()) {
+//				
+//				receiverMap.put(rs.getInt(1), rs.getBigDecimal(2));
+//				
+//			}	
+//			
+//			years = receiverMap.keySet();
+//			con.close();
+			ResultSet rs = connect.query(this.getReceiver());
 			while (rs.next()) {
-				
-				receiverMap.put(rs.getInt(1), rs.getBigDecimal(2));
-				
-			}	
 			
-			years = receiverMap.keySet();
-			con.close();
+			receiverMap.put(rs.getInt(1), rs.getBigDecimal(2));
+			
+		}	
 
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -339,7 +356,7 @@ public class Equation {
 			Integer year = itr.next();
 			try {
 				bodyMap.put(year, tree.postOrderEvaluation(year));
-			} catch (UnexpectedMissingValue e) {
+			} catch (UnexpectedMissingValueException e) {
 				
 				System.out.println("WE HERE ");
 				if (missingValues.get(e.getSerie()) == null) {

@@ -9,7 +9,7 @@ import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
 
-import databaseQueries.UnexpectedMissingValue;
+import databaseQueries.UnexpectedMissingValueException;
 import testing.Config;
 
 public class Variable extends Operand {
@@ -74,12 +74,12 @@ public class Variable extends Operand {
 	}
 	
 	@Override
-	public BigDecimal getValue(int year) throws UnexpectedMissingValue {
+	public BigDecimal getValue(int year) throws UnexpectedMissingValueException {
 		if (!empty) {
 			BigDecimal value = entryMap.get(year);
 			if (value == null) {
 				System.out.println("UNEXPECTED MISSING");
-				throw new UnexpectedMissingValue(super.getName(), year);
+				throw new UnexpectedMissingValueException(super.getName(), year);
 			}
 			else {
 				System.out.println(value);

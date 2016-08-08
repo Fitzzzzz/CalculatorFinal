@@ -4,10 +4,14 @@ import arithmeticParsing.Parser;
 import binaryTree.TreeBuilder;
 import binaryTree.TreePrinter;
 import equationHandler.Equation;
+import reader.EquationReader;
 
 public class TestGnacfinn {
 
 	public static void main(String[] args) {
+		
+		
+		EquationReader reader = new EquationReader();
 		
 		String equation = "ethpd-(ecmpd+eptpd+egzpd+ebipd+evapd)=0";
 		String codePays = "fra";

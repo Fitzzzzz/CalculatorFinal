@@ -1,6 +1,6 @@
 package databaseQueries;
 
-public class UnexpectedMissingValue extends Exception {
+public class UnexpectedMissingValueException extends Exception {
 
 	
 	private static final long serialVersionUID = 1L;
@@ -17,7 +17,7 @@ public class UnexpectedMissingValue extends Exception {
 	}
 
 
-	public UnexpectedMissingValue(String serie, int year) {
+	public UnexpectedMissingValueException(String serie, int year) {
 		
 		this.serie = serie;
 		this.year = year;

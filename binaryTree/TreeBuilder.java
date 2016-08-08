@@ -3,7 +3,7 @@ package binaryTree;
 import java.math.BigDecimal;
 import java.util.LinkedList;
 
-import databaseQueries.UnexpectedMissingValue;
+import databaseQueries.UnexpectedMissingValueException;
 import equationHandler.Operand;
 import equationHandler.Token;
 
@@ -58,9 +58,9 @@ public class TreeBuilder {
 	}
 	/**
 	 * Is actually a reverse post-order evaluation...
-	 * @throws UnexpectedMissingValue 
+	 * @throws UnexpectedMissingValueException 
 	 */
-	public BigDecimal postOrderEvaluation(Integer year) throws UnexpectedMissingValue {
+	public BigDecimal postOrderEvaluation(Integer year) throws UnexpectedMissingValueException {
 		
 		Node node = this.tree;
 //		System.out.println(node.getValue().getName());
@@ -99,9 +99,9 @@ public class TreeBuilder {
 	
 	/**
 	 * Is actually a reverse post-order evaluation...
-	 * @throws UnexpectedMissingValue 
+	 * @throws UnexpectedMissingValueException 
 	 */
-	public static BigDecimal postOrderEvaluation(Node node, Integer year) throws UnexpectedMissingValue {
+	public static BigDecimal postOrderEvaluation(Node node, Integer year) throws UnexpectedMissingValueException {
 		
 //		System.out.println("Current node = " + node.getValue().getName());
 
