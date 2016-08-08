@@ -71,7 +71,7 @@ public class Connector {
 		stmt = con.createStatement();
 	}
 	
-	public ResultSet query(String serie) throws ClassNotFoundException, SQLException {
+	public ResultSet query(String serie) throws SQLException {
 		
 		
 		
@@ -94,6 +94,25 @@ public class Connector {
 
 		
 		
+	}
+	
+	public ResultSet queryYears(String serie) throws SQLException {
+		
+		String query = "SELECT tyear "
+				+ "FROM Valeurs_tab "
+				+ "WHERE Ticker = (SELECT numero FROM Series WHERE Code_serie = '"
+				+ serie
+				+ "' AND code_pays = '" + this.country + "'"
+				+ "AND unite = '"
+				+ unit
+				+ "') "
+				+ "ORDER BY tyear";
+		
+		System.out.println(query);
+		ResultSet rs = stmt.executeQuery(query);
+		
+
+		return rs;
 	}
 	
 	public void close() throws SQLException {

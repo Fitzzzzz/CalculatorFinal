@@ -1,11 +1,8 @@
 package equationHandler;
 
 import java.math.BigDecimal;
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -16,7 +13,6 @@ import java.util.Vector;
 import binaryTree.TreeBuilder;
 import databaseQueries.Connector;
 import databaseQueries.UnexpectedMissingValueException;
-import testing.Config;
 public class Equation {
 
 	public static PriorityToken PLUS = new Operator("+", 1);
@@ -208,7 +204,12 @@ public class Equation {
 					int value = Integer.parseInt(toConvert[i]);
 					converted[i] = new Constant(toConvert[i], value);
 				} catch (NumberFormatException e) {
-					converted[i] = new Variable(toConvert[i], this.country, this.unit);
+					try {
+						converted[i] = new Variable(toConvert[i], this.country, this.unit, this.connect);
+					} catch (ClassNotFoundException | SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 					series.add(toConvert[i]);
 				}
 			
@@ -223,82 +224,13 @@ public class Equation {
 	// To use only if it's an equation, not a calculation (receiver is a serie)
 	public void queryReceiverValue() {
 		try {
-//			Class.forName("oracle.jdbc.driver.OracleDriver");
-//			Connection con = DriverManager.getConnection("jdbc:oracle:thin:@" + Config.serveur + ":1521/" + Config.database, 
-//					Config.login, 
-//					Config.password);
-//			Statement stmt = con.createStatement();
-//			String query = "SELECT tyear, valeur "
-//					+ "FROM Valeurs_tab "
-//					+ "WHERE Ticker = (SELECT numero FROM Series WHERE Code_serie = '"
-//					+ this.getReceiver()
-//					+ "' AND code_pays = '" + this.country + "'"
-//					+ "AND unite = '"
-//					+ unit
-//					+ "') "
-//					+ "ORDER BY tyear";
-//			
-//			System.out.println(query);
-//			ResultSet rs = stmt.executeQuery(query);
-//
-//			
-//			while (rs.next()) {
-//				
-//				receiverMap.put(rs.getInt(1), rs.getBigDecimal(2));
-//				
-//			}	
-//			
-//			years = receiverMap.keySet();
-//			con.close();
 			ResultSet rs = connect.query(this.getReceiver());
 			while (rs.next()) {
 			
 			receiverMap.put(rs.getInt(1), rs.getBigDecimal(2));
 			
-		}	
-
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
-	// To get the years : use only if receiver is a serie
-	// VERY PROBABLY WILL CAUSE NULL EXCEPTION BECAUSE YEARS NOT INITIALIZED
-	public void queryYears(TreeBuilder tree) {
-		try {
-			Class.forName("oracle.jdbc.driver.OracleDriver");
-			Connection con = DriverManager.getConnection("jdbc:oracle:thin:@" + Config.serveur + ":1521/" + Config.database, 
-					Config.login, 
-					Config.password);
-			Statement stmt = con.createStatement();
-			String query = "SELECT tyear "
-					+ "FROM Valeurs_tab "
-					+ "WHERE Ticker = (SELECT numero FROM Series WHERE Code_serie = '"
-					+ this.getReceiver()
-					+ "' AND code_pays = '" + this.country + "'"
-					+ "AND unite = '"
-					+ unit
-					+ "') "
-					+ "ORDER BY tyear";
-			
-			System.out.println(query);
-			ResultSet rs = stmt.executeQuery(query);
-
-			while (rs.next()) {
-				
-				years.add(rs.getInt(1));
-				
 			}	
-			
-			con.close();
 
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -307,24 +239,7 @@ public class Equation {
 	
 	private void queryYears(String serie) {
 		try {
-			Class.forName("oracle.jdbc.driver.OracleDriver");
-			Connection con = DriverManager.getConnection("jdbc:oracle:thin:@" + Config.serveur + ":1521/" + Config.database, 
-					Config.login, 
-					Config.password);
-			Statement stmt = con.createStatement();
-			String query = "SELECT tyear "
-					+ "FROM Valeurs_tab "
-					+ "WHERE Ticker = (SELECT numero FROM Series WHERE Code_serie = '"
-					+ serie
-					+ "' AND code_pays = '" + this.country + "' "
-					+ "AND unite = '"
-					+ unit
-					+ "') "
-					+ "ORDER BY tyear";
-			
-			System.out.println(query);
-			System.out.println("-----------*----------------*------------*");
-			ResultSet rs = stmt.executeQuery(query);
+			ResultSet rs = connect.queryYears(serie);
 			years = new HashSet<Integer>();
 			while (rs.next()) {
 				
@@ -334,12 +249,8 @@ public class Equation {
 				years.add(year);
 				
 			}	
-			con.close();
 
 			
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -358,7 +269,7 @@ public class Equation {
 				bodyMap.put(year, tree.postOrderEvaluation(year));
 			} catch (UnexpectedMissingValueException e) {
 				
-				System.out.println("WE HERE ");
+				System.out.println("in queryBodyValue catched UnexpectedMissingValueException");
 				if (missingValues.get(e.getSerie()) == null) {
 					Set<Integer> missingYears = new HashSet<Integer>();
 					missingYears.add(e.getYear());
