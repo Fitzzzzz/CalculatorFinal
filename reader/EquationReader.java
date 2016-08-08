@@ -37,9 +37,9 @@ public class EquationReader {
 		}
 	}
 
-	private final static Set<EquationDatas> equations = new HashSet<EquationDatas>();
+	private final Set<EquationDatas> equations = new HashSet<EquationDatas>();
 
-	public static Set<EquationDatas> getEquations() {
+	public Set<EquationDatas> getEquations() {
 		return equations;
 	}
 	

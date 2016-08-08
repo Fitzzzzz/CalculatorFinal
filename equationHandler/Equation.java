@@ -13,6 +13,7 @@ import java.util.Vector;
 import binaryTree.TreeBuilder;
 import databaseQueries.Connector;
 import databaseQueries.UnexpectedMissingValueException;
+import reader.EquationDatas;
 public class Equation {
 
 	public static PriorityToken PLUS = new Operator("+", 1);
@@ -28,12 +29,14 @@ public class Equation {
 	private Connector connect;
 	
 	
-	public Equation(String equation, String country, String unit) {
+	public Equation(EquationDatas datas, String country) {
+		
+		
+		
 		
 		this.country = country;
-		this.unit = unit;
-		
-		this.equation = equation;
+		this.unit = datas.getUnit();
+		this.equation = datas.getEquation();
 		String[] parts = equation.split("=");
 		this.receiver = parts[1];
 		this.body = parts[0];
