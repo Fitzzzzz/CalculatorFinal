@@ -25,7 +25,7 @@ public class TestGnacfinn {
 //		eq.compare();		 NOT FINISHED
 //		eq.printComparaison(); NOT FINISHED
 		eq.printBody();
-		// RAJOUTER eq.printMISSING() TODO : 
+		eq.printMissingValues();
 		
 		
 	}

@@ -54,7 +54,7 @@ public class Variable extends Operand {
 			while (rs.next()) {
 				
 				entryMap.put(rs.getInt(1), rs.getBigDecimal(2));
-				if (!empty) {
+				if (empty) {
 					empty = false;
 				}
 			}
@@ -78,13 +78,15 @@ public class Variable extends Operand {
 		if (!empty) {
 			BigDecimal value = entryMap.get(year);
 			if (value == null) {
+				System.out.println("UNEXPECTED MISSING");
 				throw new UnexpectedMissingValue(super.getName(), year);
 			}
 			else {
+				System.out.println(value);
 				return value;
 			}
 		}
-		
+		System.out.println(super.getName() + " is empty");
 		return BigDecimal.ZERO;
 	
 	}

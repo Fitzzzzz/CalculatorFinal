@@ -63,18 +63,18 @@ public class TreeBuilder {
 	public BigDecimal postOrderEvaluation(Integer year) throws UnexpectedMissingValue {
 		
 		Node node = this.tree;
-		System.out.println(node.getValue().getName());
+//		System.out.println(node.getValue().getName());
 		
 		if (node.getValue().getType() == 0) {
 			return ((Operand) (node.getValue())).getValue(year);
 		}
-		System.out.println("Current node = " + node.getValue().getName());
+//		System.out.println("Current node = " + node.getValue().getName());
 
 		BigDecimal rightValue = postOrderEvaluation(node.getRightSon(), year);
-		System.out.println("Current node = " + node.getValue().getName());
+//		System.out.println("Current node = " + node.getValue().getName());
 
 		BigDecimal leftValue = postOrderEvaluation(node.getLeftSon(), year);
-		System.out.println("Current node = " + node.getValue().getName());
+//		System.out.println("Current node = " + node.getValue().getName());
 
 		switch (node.getValue().getName()) {
 		case "+": 
@@ -103,20 +103,20 @@ public class TreeBuilder {
 	 */
 	public static BigDecimal postOrderEvaluation(Node node, Integer year) throws UnexpectedMissingValue {
 		
-		System.out.println("Current node = " + node.getValue().getName());
+//		System.out.println("Current node = " + node.getValue().getName());
 
 		if (node.getValue().getType() == 0) {
 			return ((Operand) (node.getValue())).getValue(year);
 		}
-		System.out.println("Current node = " + node.getValue().getName());
+//		System.out.println("Current node = " + node.getValue().getName());
 		BigDecimal rightValue = postOrderEvaluation(node.getRightSon(), year);
-		System.out.println("Current node = " + node.getValue().getName());
+//		System.out.println("Current node = " + node.getValue().getName());
 		BigDecimal leftValue = postOrderEvaluation(node.getLeftSon(), year);
-		System.out.println("Current node = " + node.getValue().getName());
+//		System.out.println("Current node = " + node.getValue().getName());
 
 		switch (node.getValue().getName()) {
 		case "+": 
-			System.out.println("rightvalue = " + rightValue.toString() + " leftvalue = " + leftValue.toString());
+//			System.out.println("rightvalue = " + rightValue.toString() + " leftvalue = " + leftValue.toString());
 			return rightValue.add(leftValue);
 			
 		case "-":

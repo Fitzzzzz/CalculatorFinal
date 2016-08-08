@@ -123,6 +123,7 @@ public class Equation {
  	
  	private final Map<String, Set<Integer>> missingValues = new HashMap<String, Set<Integer>>();
 
+ 	private final Set<String> series = new HashSet<String>();
 
 	private String[] split(String[] toSplit, PriorityToken separator) {
 		
@@ -197,6 +198,7 @@ public class Equation {
 					converted[i] = new Constant(toConvert[i], value);
 				} catch (NumberFormatException e) {
 					converted[i] = new Variable(toConvert[i], this.country, this.unit);
+					series.add(toConvert[i]);
 				}
 			
 			}
@@ -339,6 +341,7 @@ public class Equation {
 				bodyMap.put(year, tree.postOrderEvaluation(year));
 			} catch (UnexpectedMissingValue e) {
 				
+				System.out.println("WE HERE ");
 				if (missingValues.get(e.getSerie()) == null) {
 					Set<Integer> missingYears = new HashSet<Integer>();
 					missingYears.add(e.getYear());
@@ -384,6 +387,7 @@ public class Equation {
 	
 	public void printBody() {
 		
+		System.out.println("We in printBody");
 		Iterator<Integer> itr = years.iterator();
 		while (itr.hasNext()) {
 			Integer year = itr.next();
@@ -394,7 +398,21 @@ public class Equation {
 	
 	public void printMissingValues() {
 		
-		
+		Iterator<String> itr = series.iterator();
+		while (itr.hasNext()) {
+			
+			String serie = itr.next();
+			System.out.println("iterating on " + serie);
+			Set<Integer> missingYears = missingValues.get(serie);
+			if (missingYears != null) {
+				Iterator<Integer> itrYears = missingYears.iterator();
+				while (itrYears.hasNext()) {
+					System.out.println(serie + " missing " + itrYears.next());
+				}
+			}
+			
+			
+		}
 		
 	}
 	
