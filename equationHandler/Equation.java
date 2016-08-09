@@ -25,11 +25,12 @@ public class Equation {
 	
 	private String country;
 	private String unit;
+	private float precision;
 	
 	private Connector connect;
 	
 	
-	public Equation(EquationDatas datas, String country) {
+	public Equation(EquationDatas datas, String country) throws ClassNotFoundException, SQLException {
 		
 		
 		
@@ -37,9 +38,23 @@ public class Equation {
 		this.country = country;
 		this.unit = datas.getUnit();
 		this.equation = datas.getEquation();
-		String[] parts = equation.split("=");
-		this.receiver = parts[1];
-		this.body = parts[0];
+		this.precision = datas.getPrecision();
+		if (equation.contains("=")) {
+			String[] parts = equation.split("=");
+			this.receiver = parts[1];
+			this.body = parts[0];
+		}
+		else if (equation.contains("<")) {
+			String[] parts = equation.split("<");
+			this.receiver = parts[1];
+			this.body = parts[0];
+		}
+		else if (equation.contains(">")) {
+			String[] parts = equation.split(">");
+			this.receiver = parts[1];
+			this.body = parts[0];
+		}
+		
 		String[] tmp = {body};
 		
 		tmp = this.split(tmp, PLUS);	
@@ -49,27 +64,11 @@ public class Equation {
 		tmp = this.split(tmp, OPENPARENTHESES);	
 		tmp = this.split(tmp, CLOSEPARENTHESES);	
 		
-		try {
-			connect = new Connector(unit, "fra");
-		} catch (ClassNotFoundException | SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		// THROWS CLASSNOTFOUND SQLEXCEP
+		this.connect = new Connector(unit, country);
 		
 		
-		// TODO : to remove
-		for (int i = 0; i < tmp.length; i++) {
-			System.out.print(tmp[i] + "______");
-		}
-		System.out.println("");
-		
-		tokens = this.convertStringToToken(tmp);
-		
-		// TODO : remove
-		for (int i = 0; i < tokens.length; i++) {
-			System.out.print(tokens[i] + "______");
-		}
-		System.out.println("");
+		this.tokens = this.convertStringToToken(tmp);
 		
 		if (receiver.equals("0")) {
 			System.out.println("receiver equals 0, using " + tmp[0]);			
@@ -77,9 +76,7 @@ public class Equation {
 		}
 		else {
 			this.queryReceiverValue();
-		}
-		
-		
+		}		
 	}
 	
 	private String equation;
@@ -117,14 +114,10 @@ public class Equation {
 		return tokens;
 	}
 	
-	private Set<Integer> years;
+	private final Set<Integer> years = new HashSet<Integer>();
 	
  	public Set<Integer> getYears() {
 		return years;
-	}
-
-	public void setYears(Set<Integer> years) {
-		this.years = years;
 	}
 
 	private final Map<Integer, Boolean> resultMap = new HashMap<Integer, Boolean>();
@@ -243,7 +236,7 @@ public class Equation {
 	private void queryYears(String serie) {
 		try {
 			ResultSet rs = connect.queryYears(serie);
-			years = new HashSet<Integer>();
+			System.out.println("in query Years : connect done");
 			while (rs.next()) {
 				
 				System.out.println("Adding a year to years");
@@ -286,7 +279,7 @@ public class Equation {
 		}
 	}
 	
-	public void compare() {
+	public void compareEqual() {
 		
 		Iterator<Integer> itr = years.iterator();
 		BigDecimal diff;
@@ -296,7 +289,42 @@ public class Equation {
 			differenceMap.put(year, diff);
 			
 			// if the difference between the expected result and the result is smaller or equal to 0.5
-			if (diff.abs().compareTo(new BigDecimal(0.5)) <= 0) {
+			if (diff.abs().compareTo(new BigDecimal(this.precision)) <= 0) {
+				resultMap.put(year, true);
+			}
+			// if it's higher
+			else {
+				resultMap.put(year, false);
+			}
+		}
+	}
+	
+	public void compareSmaller() {
+		
+		Iterator<Integer> itr = years.iterator();
+		while (itr.hasNext()) {
+			Integer year = itr.next();
+			
+			// if the difference between the expected result and the result is smaller or equal to 0.5
+			if (bodyMap.get(year).subtract(new BigDecimal(this.precision)).compareTo(BigDecimal.ZERO) <= 0) {
+				resultMap.put(year, true);
+			}
+			// if it's higher
+			else {
+				resultMap.put(year, false);
+			}
+		}
+	}
+	
+	
+	public void compareGreater() {
+		
+		Iterator<Integer> itr = years.iterator();
+		while (itr.hasNext()) {
+			Integer year = itr.next();
+			
+			// if the difference between the expected result and the result is smaller or equal to 0.5
+			if (bodyMap.get(year).add(new BigDecimal(this.precision)).compareTo(BigDecimal.ZERO) >= 0) {
 				resultMap.put(year, true);
 			}
 			// if it's higher
@@ -315,6 +343,7 @@ public class Equation {
 		}
 		
 	}
+
 	
 	public void printBody() {
 		

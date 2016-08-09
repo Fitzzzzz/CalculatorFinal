@@ -1,5 +1,7 @@
 package reader;
 
+import testing.Config;
+
 public class EquationDatas {
 
 	public String getEquation() {
@@ -14,7 +16,7 @@ public class EquationDatas {
 		return database;
 	}
 
-	public String getPrecision() {
+	public float getPrecision() {
 		return precision;
 	}
 
@@ -37,7 +39,7 @@ public class EquationDatas {
 	private String equation;
 	private String unit;
 	private String database;
-	private String precision;
+	private float precision;
 	private String start;
 	private String end;
 	private String temporality;
@@ -49,10 +51,14 @@ public class EquationDatas {
 		this.argumentsNb = line.length;
 		this.equation = line[0];
 		this.unit = line[1];
+		System.out.println(argumentsNb + "     " + line.length);
+		for (int i = 0; i < line.length; i++) {
+			System.out.println("+   " + line[i]);
+		}
 		
 		if (argumentsNb == 4 || argumentsNb == 7) {
 			this.database = line[2];
-			this.precision = line[3];
+			this.precision = Float.parseFloat(line[3]);
 			if (argumentsNb == 7) {
 				this.start = line[4];
 				this.end = line[5];
@@ -60,7 +66,8 @@ public class EquationDatas {
 			}
 		}
 		else if (argumentsNb == 3 || argumentsNb == 6) {
-			this.precision = line[2];
+			this.database = Config.database;
+			this.precision = Float.parseFloat(line[2]);
 			if (argumentsNb == 6) {
 				this.start = line[3];
 				this.end = line[4];

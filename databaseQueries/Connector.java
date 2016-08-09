@@ -81,7 +81,7 @@ public class Connector {
 				+ "WHERE Ticker = (SELECT numero FROM Series WHERE Code_serie = '"
 				+ serie
 				+ "' AND code_pays = '" + this.country + "'"
-				+ "AND unite = '"
+				+ " AND unite = '"
 				+ unit
 				+ "') "
 				+ "ORDER BY tyear";
@@ -98,19 +98,21 @@ public class Connector {
 	
 	public ResultSet queryYears(String serie) throws SQLException {
 		
-		String query = "SELECT tyear "
+		String query = "SELECT TYear "
 				+ "FROM Valeurs_tab "
 				+ "WHERE Ticker = (SELECT numero FROM Series WHERE Code_serie = '"
 				+ serie
 				+ "' AND code_pays = '" + this.country + "'"
-				+ "AND unite = '"
+				+ " AND unite = '"
 				+ unit
 				+ "') "
 				+ "ORDER BY tyear";
 		
 		System.out.println(query);
 		ResultSet rs = stmt.executeQuery(query);
-		
+//		while (rs.next()) {
+//			System.out.println("lol");
+//		}
 
 		return rs;
 	}
