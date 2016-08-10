@@ -11,30 +11,27 @@ public class EquationReader {
 	
 	public static final String filename = "equations";
 	
-	public EquationReader() {
+	public EquationReader() throws IOException {
 		
-		try (FileReader fr = new FileReader(filename);
-			CSVReader reader = new CSVReader(fr, ';'))
-		{
-			String[] nextLine;
-			while ((nextLine = reader.readNext()) != null) {
-				
-				try {
-					equations.add(new EquationDatas(nextLine));
-				} catch (IncorrectEntryFormatException e) {
-					System.out.print("Equation : \"");
-					for (int i = 0; i < nextLine.length; i++) {
-						System.out.print(nextLine[i] + ";");
-					}
-					System.out.println("\" doesn't respect the excepted format. It will be ignored." );
+		FileReader fr = new FileReader(filename);
+		CSVReader reader = new CSVReader(fr, ';');
+	
+		String[] nextLine;
+		while ((nextLine = reader.readNext()) != null) {
+			
+			try {
+				equations.add(new EquationDatas(nextLine));
+			} catch (IncorrectEntryFormatException e) {
+				System.out.print("Equation : \"");
+				for (int i = 0; i < nextLine.length; i++) {
+					System.out.print(nextLine[i] + ";");
 				}
-				
+				System.out.println("\" doesn't respect the excepted format. It will be ignored." );
 			}
 			
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
+		
+		
 	}
 
 	private final Set<EquationDatas> equations = new HashSet<EquationDatas>();

@@ -49,7 +49,7 @@ public class Variable extends Operand {
 				throw new UnexpectedMissingValueException(super.getName(), year);
 			}
 			else {
-				System.out.println(value);
+				System.out.println(this.getName() + " : " + value);
 				return value;
 			}
 		}

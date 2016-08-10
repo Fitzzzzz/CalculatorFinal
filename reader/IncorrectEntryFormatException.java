@@ -7,13 +7,32 @@ public class IncorrectEntryFormatException extends Exception {
 
 	private String[] line;
 	
+	public String[] getLine() {
+		return line;
+	}
+
+	private String equation;
+
+	public String getEquation() {
+		return equation;
+	}
+
+	private String errorMsg;
+	
+	public String getErrorMsg() {
+		return errorMsg;
+	}
+
 	public IncorrectEntryFormatException(String[] line) {
 		this.line = line;
 	}
 
-	public String[] getLine() {
-		return line;
+	public IncorrectEntryFormatException(String equation, String errorMsg) {
+		this.equation = equation;
+		this.errorMsg = errorMsg;
 	}
+	
+
 
 	
 }

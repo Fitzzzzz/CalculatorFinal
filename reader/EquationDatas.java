@@ -36,6 +36,7 @@ public class EquationDatas {
 		return argumentsNb;
 	}
 
+	private String[] line;
 	private String equation;
 	private String unit;
 	private String database;
@@ -48,6 +49,7 @@ public class EquationDatas {
 	// rajouter exceptions si mauvais formattage
 	public EquationDatas(String[] line) throws IncorrectEntryFormatException {
 		
+		this.line = line;
 		this.argumentsNb = line.length;
 		this.equation = line[0];
 		this.unit = line[1];
@@ -79,5 +81,18 @@ public class EquationDatas {
 		}
 		
 	}
+
+	@Override
+	public String toString() {
+		
+		String eq = "";
+		for (int i = 0; i < argumentsNb - 1; i++) {
+			eq = eq + line[i] + ";";
+		}
+		return eq + line[argumentsNb - 1];
+		
+	}
+	
+	
 	
 }

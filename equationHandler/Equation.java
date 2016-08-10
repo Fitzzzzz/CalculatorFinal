@@ -14,6 +14,7 @@ import binaryTree.TreeBuilder;
 import databaseQueries.Connector;
 import databaseQueries.UnexpectedMissingValueException;
 import reader.EquationDatas;
+import reader.IncorrectEntryFormatException;
 public class Equation {
 
 	public static PriorityToken PLUS = new Operator("+", 1);
@@ -29,8 +30,9 @@ public class Equation {
 	
 	private Connector connect;
 	
+	private String equationType;
 	
-	public Equation(EquationDatas datas, String country) throws ClassNotFoundException, SQLException {
+	public Equation(EquationDatas datas, String country) throws ClassNotFoundException, SQLException, IncorrectEntryFormatException {
 		
 		
 		
@@ -43,16 +45,22 @@ public class Equation {
 			String[] parts = equation.split("=");
 			this.receiver = parts[1];
 			this.body = parts[0];
+			this.equationType = "=";
 		}
 		else if (equation.contains("<")) {
 			String[] parts = equation.split("<");
 			this.receiver = parts[1];
 			this.body = parts[0];
+			this.equationType = "<";
 		}
 		else if (equation.contains(">")) {
 			String[] parts = equation.split(">");
 			this.receiver = parts[1];
 			this.body = parts[0];
+			this.equationType = ">";
+		}
+		else {
+			throw new IncorrectEntryFormatException(equation, "Missing an operator ('=', '<' or '>') in the equation : " + equation);
 		}
 		
 		String[] tmp = {body};
@@ -64,7 +72,6 @@ public class Equation {
 		tmp = this.split(tmp, OPENPARENTHESES);	
 		tmp = this.split(tmp, CLOSEPARENTHESES);	
 		
-		// THROWS CLASSNOTFOUND SQLEXCEP
 		this.connect = new Connector(unit, country);
 		
 		
@@ -279,17 +286,30 @@ public class Equation {
 		}
 	}
 	
-	public void compareEqual() {
+	public void compare() {
+		
+		switch (this.equationType) 
+		{
+		case "=":
+			compareEqual();
+			break;
+		case ">":
+			compareGreater();
+			break;
+		case "<":
+			compareSmaller();
+			break;
+		}
+	}
+	
+	private void compareEqual() {
 		
 		Iterator<Integer> itr = years.iterator();
-		BigDecimal diff;
 		while (itr.hasNext()) {
 			Integer year = itr.next();
-			diff = receiverMap.get(year).subtract(bodyMap.get(year));
-			differenceMap.put(year, diff);
 			
 			// if the difference between the expected result and the result is smaller or equal to 0.5
-			if (diff.abs().compareTo(new BigDecimal(this.precision)) <= 0) {
+			if (bodyMap.get(year).abs().compareTo(new BigDecimal(this.precision)) <= 0) {
 				resultMap.put(year, true);
 			}
 			// if it's higher
@@ -299,14 +319,14 @@ public class Equation {
 		}
 	}
 	
-	public void compareSmaller() {
+	private void compareSmaller() {
 		
 		Iterator<Integer> itr = years.iterator();
 		while (itr.hasNext()) {
 			Integer year = itr.next();
 			
 			// if the difference between the expected result and the result is smaller or equal to 0.5
-			if (bodyMap.get(year).subtract(new BigDecimal(this.precision)).compareTo(BigDecimal.ZERO) <= 0) {
+			if (bodyMap.get(year).compareTo(BigDecimal.ZERO) <= 0) {
 				resultMap.put(year, true);
 			}
 			// if it's higher
@@ -317,14 +337,14 @@ public class Equation {
 	}
 	
 	
-	public void compareGreater() {
+	private void compareGreater() {
 		
 		Iterator<Integer> itr = years.iterator();
 		while (itr.hasNext()) {
 			Integer year = itr.next();
 			
 			// if the difference between the expected result and the result is smaller or equal to 0.5
-			if (bodyMap.get(year).add(new BigDecimal(this.precision)).compareTo(BigDecimal.ZERO) >= 0) {
+			if (bodyMap.get(year).compareTo(BigDecimal.ZERO) >= 0) {
 				resultMap.put(year, true);
 			}
 			// if it's higher
