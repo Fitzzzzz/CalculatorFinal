@@ -1,5 +1,8 @@
 package reader;
 
+import java.util.LinkedList;
+
+import equationHandler.YearValueDuo;
 import testing.Config;
 
 public class EquationDatas {
@@ -45,7 +48,16 @@ public class EquationDatas {
 	private String end;
 	private String temporality;
 	private int argumentsNb;
+	private LinkedList<YearValueDuo> errors;
 	
+	public LinkedList<YearValueDuo> getErrors() {
+		return errors;
+	}
+
+	public void setErrors(LinkedList<YearValueDuo> errors) {
+		this.errors = errors;
+	}
+
 	// rajouter exceptions si mauvais formattage
 	public EquationDatas(String[] line) throws IncorrectEntryFormatException {
 		

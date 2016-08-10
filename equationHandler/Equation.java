@@ -6,6 +6,8 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
@@ -268,6 +270,7 @@ public class Equation {
 		Iterator<Integer> itr = years.iterator();
 		while (itr.hasNext()) {
 			Integer year = itr.next();
+			System.out.println(year + " : ");
 			try {
 				bodyMap.put(year, tree.postOrderEvaluation(year));
 			} catch (UnexpectedMissingValueException e) {
@@ -286,72 +289,86 @@ public class Equation {
 		}
 	}
 	
-	public void compare() {
+	public LinkedList<YearValueDuo> compare() {
 		
 		switch (this.equationType) 
 		{
 		case "=":
-			compareEqual();
-			break;
+			return compareEqual();
 		case ">":
-			compareGreater();
-			break;
+			return compareGreater();
 		case "<":
-			compareSmaller();
-			break;
+			return compareSmaller();
+		default:
+			return null;
 		}
+		
 	}
 	
-	private void compareEqual() {
+	private LinkedList<YearValueDuo> compareEqual() {
 		
 		Iterator<Integer> itr = years.iterator();
+		LinkedList<YearValueDuo> errors = new LinkedList<YearValueDuo>();
 		while (itr.hasNext()) {
 			Integer year = itr.next();
-			
+			BigDecimal value = bodyMap.get(year);
+
 			// if the difference between the expected result and the result is smaller or equal to 0.5
-			if (bodyMap.get(year).abs().compareTo(new BigDecimal(this.precision)) <= 0) {
+			if (value.abs().compareTo(new BigDecimal(this.precision)) <= 0) {
 				resultMap.put(year, true);
 			}
 			// if it's higher
 			else {
 				resultMap.put(year, false);
+				errors.addLast(new YearValueDuo(year, value));
 			}
 		}
+		return errors;
 	}
 	
-	private void compareSmaller() {
+	private LinkedList<YearValueDuo> compareSmaller() {
 		
 		Iterator<Integer> itr = years.iterator();
+		
+		LinkedList<YearValueDuo> errors = new LinkedList<YearValueDuo>();
+		
 		while (itr.hasNext()) {
 			Integer year = itr.next();
-			
+			BigDecimal value = bodyMap.get(year);
 			// if the difference between the expected result and the result is smaller or equal to 0.5
-			if (bodyMap.get(year).compareTo(BigDecimal.ZERO) <= 0) {
+			if (value.compareTo(BigDecimal.ZERO) <= 0) {
 				resultMap.put(year, true);
 			}
 			// if it's higher
 			else {
 				resultMap.put(year, false);
+				errors.addLast(new YearValueDuo(year, value));
 			}
 		}
+		return errors;
 	}
 	
 	
-	private void compareGreater() {
+	private LinkedList<YearValueDuo> compareGreater() {
 		
 		Iterator<Integer> itr = years.iterator();
+		LinkedList<YearValueDuo> errors = new LinkedList<YearValueDuo>();
+		
 		while (itr.hasNext()) {
 			Integer year = itr.next();
-			
+			System.out.println(year);
+			BigDecimal value = bodyMap.get(year);
 			// if the difference between the expected result and the result is smaller or equal to 0.5
-			if (bodyMap.get(year).compareTo(BigDecimal.ZERO) >= 0) {
+			if (value.compareTo(BigDecimal.ZERO) >= 0) {
 				resultMap.put(year, true);
 			}
 			// if it's higher
 			else {
 				resultMap.put(year, false);
+				errors.addLast(new YearValueDuo(year, value));
 			}
 		}
+		return errors;
 	}
 	
 	public void printComparaison() {

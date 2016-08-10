@@ -2,8 +2,7 @@ package reader;
 
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.LinkedList;
 
 import com.opencsv.CSVReader;
 
@@ -31,12 +30,14 @@ public class EquationReader {
 			
 		}
 		
+		reader.close();
+		
 		
 	}
 
-	private final Set<EquationDatas> equations = new HashSet<EquationDatas>();
+	private final LinkedList<EquationDatas> equations = new LinkedList<EquationDatas>();
 
-	public Set<EquationDatas> getEquations() {
+	public LinkedList<EquationDatas> getEquations() {
 		return equations;
 	}
 	

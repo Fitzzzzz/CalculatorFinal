@@ -8,14 +8,18 @@ import java.sql.SQLException;
 //import java.sql.SQLException;
 //import java.sql.Statement;
 import java.util.Iterator;
+import java.util.LinkedList;
 
 import arithmeticParsing.Parser;
 import binaryTree.TreeBuilder;
 import binaryTree.TreePrinter;
 import equationHandler.Equation;
+import equationHandler.EquationErrors;
+import equationHandler.YearValueDuo;
 import reader.EquationDatas;
 import reader.EquationReader;
 import reader.IncorrectEntryFormatException;
+import writer.FileCreator;
 
 public class TestGnacfinn {
 
@@ -55,10 +59,10 @@ public class TestGnacfinn {
 		EquationReader reader;
 		try {
 			reader = new EquationReader();
-			String equation = "ethpd-(ecmpd+eptpd+egzpd+ebipd+evapd)=0";
 			String codePays = "fra";
 			
 			Iterator<EquationDatas> itr = reader.getEquations().iterator();
+			
 			
 			while (itr.hasNext()) {
 				
@@ -76,7 +80,9 @@ public class TestGnacfinn {
 						
 						
 						eq.queryBodyValue(tree);
-						eq.compare();
+						
+						current.setErrors(eq.compare());
+						
 						eq.printBody();
 						eq.printMissingValues();
 						
@@ -87,9 +93,16 @@ public class TestGnacfinn {
 						System.out.println(e.getErrorMsg());
 					}
 			}
+			
+			
+			FileCreator test = new FileCreator("lol");
+			test.write();
+			
+			
 		} catch (IOException e) {
 			System.out.println("Couldn't read the entry file 'equations'.");
 		}
+		
 		
 		
 		
