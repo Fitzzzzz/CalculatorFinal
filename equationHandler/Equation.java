@@ -413,4 +413,8 @@ public class Equation {
 		
 	}
 	
+	public void closeConnection() throws SQLException {
+		this.connect.close();
+	}
+	 
 }

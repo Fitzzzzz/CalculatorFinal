@@ -5,6 +5,8 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.HashSet;
+import java.util.Iterator;
 
 import testing.Config;
 
@@ -71,6 +73,18 @@ public class Connector {
 		stmt = con.createStatement();
 	}
 	
+	
+	public Connector() throws ClassNotFoundException, SQLException {
+		
+		Class.forName("oracle.jdbc.driver.OracleDriver");
+		con = DriverManager.getConnection("jdbc:oracle:thin:@" + Config.serveur + ":1521/" + Config.database, 
+				Config.login, 
+				Config.password);
+		stmt = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+		
+	}
+	
+	
 	public ResultSet query(String serie) throws SQLException {
 		
 		
@@ -117,8 +131,34 @@ public class Connector {
 		return rs;
 	}
 	
-	public void close() throws SQLException {
-		con.close();
+	public ResultSet queryAll(HashSet<String> except) throws SQLException {
+		
+		String query = 	"SELECT code_serie,unite,code_pays,valeur,tyear,p_titre_fra " +
+						"FROM Pays P,Series S,Valeurs_tab V " + 
+						"WHERE ROUND(V.valeur,6)<0 ";
+		String and = "AND S.code_serie NOT LIKE ";
+		
+		Iterator<String> itr = except.iterator();
+		while (itr.hasNext()) {
+			
+			query = query + and + "'" + itr.next() + "' " ;
+			
+		}
+		query = query + "AND S.numero= V.ticker " +
+						"AND P.p_code= S.code_pays " +
+						"AND S.Numero=V.Ticker";
+		
+		ResultSet rs = stmt.executeQuery(query);
+		
+		return rs;
+		
+		
+		
 	}
 	
+	public void close() throws SQLException {
+		
+		con.close();
+		
+	}
 }

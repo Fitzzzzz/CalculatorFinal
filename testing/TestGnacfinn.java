@@ -2,11 +2,13 @@ package testing;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.HashSet;
 import java.util.Iterator;
 
 import arithmeticParsing.Parser;
 import binaryTree.TreeBuilder;
 import binaryTree.TreePrinter;
+import databaseQueries.Connector;
 import equationHandler.Equation;
 import reader.EquationDatas;
 import reader.EquationReader;
@@ -17,41 +19,13 @@ public class TestGnacfinn {
 
 	public static void main(String[] args) {
 		
-//		
-//		try {
-//			Class.forName("oracle.jdbc.driver.OracleDriver");
-//			Connection con = DriverManager.getConnection("jdbc:oracle:thin:@" + Config.serveur + ":1521/" + Config.database, 
-//					Config.login, 
-//					Config.password);
-//			Statement stmt = con.createStatement();
-//			String query = "SELECT tyear, valeur "
-//					+ "FROM Valeurs_tab "
-//					+ "WHERE Ticker = (SELECT numero FROM Series WHERE Code_serie = '"
-//					+ "ethpd"
-//					+ "' AND code_pays = '" + "fra" + "'"
-//					+ " AND unite = '"
-//					+ "GWh"
-//					+ "') "
-//					+ "ORDER BY tyear";
-//			ResultSet rs = stmt.executeQuery(query);
-//			while (rs.next()) {
-//				System.out.println("un rs de plus");
-//			}
-//		} catch (ClassNotFoundException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (SQLException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-		
-		
-		
-		
 		EquationReader reader;
+		String codePays = "fra";
+		String exceptFile = "negativeExceptions.txt";
+		
+		
 		try {
 			reader = new EquationReader();
-			String codePays = "fra";
 			
 			Iterator<EquationDatas> itr = reader.getEquations().iterator();
 			
@@ -78,6 +52,9 @@ public class TestGnacfinn {
 						eq.printBody();
 						eq.printMissingValues();
 						
+						eq.closeConnection();
+						
+						
 					} catch (ClassNotFoundException | SQLException e) {
 						System.out.println("Unknown problem while trying to connect to the database");
 						e.printStackTrace();
@@ -86,12 +63,33 @@ public class TestGnacfinn {
 					}
 			}
 		
-			String fileName = "file";
+			String fileName = "file.txt";
 			FileCreator writer = new FileCreator(fileName);
+			writer.write(reader.getEquations());
 			
 			
 		} catch (IOException e) {
 			System.out.println("Couldn't read the entry file 'equations'.");
+			e.printStackTrace();
+		}
+		
+		EquationReader exceptionReader = new EquationReader(exceptFile);
+
+		try {
+			HashSet<String> exceptions = exceptionReader.readAllFile();
+			Connector connection = new Connector();
+			FileCreator exceptionCreated = new FileCreator(exceptFile);
+			exceptionCreated.write(connection.queryAll(exceptions));
+			
+		} catch (IOException e) {
+			System.out.println("Exceptions File couldn't be reached/read.");
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		
 		

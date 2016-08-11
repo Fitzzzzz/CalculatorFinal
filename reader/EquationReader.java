@@ -2,17 +2,18 @@ package reader;
 
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.LinkedList;
 
 import com.opencsv.CSVReader;
 
 public class EquationReader {
 	
-	public static final String filename = "equations";
+	public String fileName = "equations";
 	
 	public EquationReader() throws IOException {
 		
-		FileReader fr = new FileReader(filename);
+		FileReader fr = new FileReader(fileName);
 		CSVReader reader = new CSVReader(fr, ';');
 	
 		String[] nextLine;
@@ -35,6 +36,30 @@ public class EquationReader {
 		
 	}
 
+	public EquationReader(String fileName) {
+		
+		this.fileName = fileName;
+		
+	}
+	
+	public HashSet<String> readAllFile() throws IOException {
+		
+		FileReader fr = new FileReader(fileName);
+		CSVReader reader = new CSVReader(fr, ';');
+		String[] nextLine;
+		
+		HashSet<String> file = new HashSet<String>();
+		
+		while ((nextLine = reader.readNext()) != null) {
+			for (int i = 0; i < nextLine.length; i++)
+				file.add(nextLine[i]);
+			
+		}
+		reader.close();
+		return file;
+		
+	}
+	
 	private final LinkedList<EquationDatas> equations = new LinkedList<EquationDatas>();
 
 	public LinkedList<EquationDatas> getEquations() {
