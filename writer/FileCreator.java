@@ -1,38 +1,48 @@
 package writer;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
+import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.OutputStream;
+import java.nio.charset.Charset;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
+import java.nio.file.OpenOption;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
+import java.util.Iterator;
+import java.util.LinkedList;
+
+import reader.EquationDatas;
 
 public class FileCreator {
 
-	private String filename;
+	private BufferedWriter writer;
 
-	public FileCreator(String filename) {
-		this.filename = filename;
+	public FileCreator(String fileName) throws IOException {
+
+		OpenOption[] options = {StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, };
+		Charset charset = Charset.forName("US-ASCII");
+	    Path path = FileSystems.getDefault().getPath("output", fileName);
+	    BufferedWriter writer = Files.newBufferedWriter(path, charset, options);
+	    this.writer = writer;
+
 	}
 	
-	public void write() throws FileNotFoundException, IOException {
+	public void write(LinkedList<EquationDatas> equations) {
 		
-		try ( FileOutputStream fos = new FileOutputStream("test.txt") ) {
-				  
+		Iterator<EquationDatas> itr = equations.iterator();
+		while (itr.hasNext()) {
 			
-			byte[] buf = new byte[8];
-			int n = 0;
-			buf[0] = 4;
 			
-			fos.write(buf);       
-			for(byte bit : buf)
-				System.out.print("\t" + bit + "(" + (char)bit + ")");         
-			   
-			System.out.println("");
-			  
-
-			System.out.println("Copie terminée !");
-			        
-			} 
+			
+		}
+		
+		
+	}
+	
+	public void writeString(String msg) throws IOException {
+		
+		writer.write(msg);
+		
 		
 	}
 	

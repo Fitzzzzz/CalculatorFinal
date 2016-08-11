@@ -2,20 +2,12 @@ package testing;
 
 import java.io.IOException;
 import java.sql.SQLException;
-//import java.sql.Connection;
-//import java.sql.DriverManager;
-//import java.sql.ResultSet;
-//import java.sql.SQLException;
-//import java.sql.Statement;
 import java.util.Iterator;
-import java.util.LinkedList;
 
 import arithmeticParsing.Parser;
 import binaryTree.TreeBuilder;
 import binaryTree.TreePrinter;
 import equationHandler.Equation;
-import equationHandler.EquationErrors;
-import equationHandler.YearValueDuo;
 import reader.EquationDatas;
 import reader.EquationReader;
 import reader.IncorrectEntryFormatException;
@@ -93,10 +85,9 @@ public class TestGnacfinn {
 						System.out.println(e.getErrorMsg());
 					}
 			}
-			
-			
-			FileCreator test = new FileCreator("lol");
-			test.write();
+		
+			String fileName = "file";
+			FileCreator writer = new FileCreator(fileName);
 			
 			
 		} catch (IOException e) {
