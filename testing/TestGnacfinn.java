@@ -13,11 +13,17 @@ import equationHandler.Equation;
 import reader.EquationDatas;
 import reader.EquationReader;
 import reader.IncorrectEntryFormatException;
+import resultSetParser.RSParser;
 import writer.FileCreator;
 
 public class TestGnacfinn {
 
 	public static void main(String[] args) {
+		
+		
+		long startTime = System.nanoTime();
+
+		
 		
 		EquationReader reader;
 		String codePays = "fra";
@@ -72,14 +78,29 @@ public class TestGnacfinn {
 			System.out.println("Couldn't read the entry file 'equations'.");
 			e.printStackTrace();
 		}
-		
-		EquationReader exceptionReader = new EquationReader(exceptFile);
+		long controlEnd = System.nanoTime();
 
+		EquationReader exceptionReader = new EquationReader(exceptFile);
+		long queryNegativStart = 0;
+		long queryNegativEnd = 0;
+		long writeStart = 0;
+		
+		
 		try {
 			HashSet<String> exceptions = exceptionReader.readAllFile();
 			Connector connection = new Connector();
+			
+			queryNegativStart = System.nanoTime();
+			
+			RSParser parser = new RSParser(connection.queryAll(exceptions));
+			
+			queryNegativEnd = System.nanoTime();
+
 			FileCreator exceptionCreated = new FileCreator(exceptFile);
-			exceptionCreated.write(connection.queryAll(exceptions));
+			
+			writeStart = System.nanoTime();
+			exceptionCreated.writeCountryFirst(parser.sortCountryFirst());
+			
 			
 		} catch (IOException e) {
 			System.out.println("Exceptions File couldn't be reached/read.");
@@ -96,7 +117,17 @@ public class TestGnacfinn {
 		
 		
 		
+		long stopTime = System.nanoTime();
+		
+		System.out.println("Temps controle = " + ((controlEnd - startTime)/1000000000));
+		System.out.println("Temps negativ = " + ((stopTime - controlEnd)/1000000000));
+		System.out.println("Temps query negativ = " + ((queryNegativEnd - queryNegativStart)/1000000000));
+		System.out.println("Temps ecriture negative = " + ((stopTime - writeStart)/1000000000));
+		System.out.println("Temps total = " + ((stopTime - startTime)/1000000000));
 		
 		
 	}
+	
+
+
 }

@@ -11,11 +11,13 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 
 import equationHandler.YearValueDuo;
 import reader.EquationDatas;
+import resultSetParser.CountryFirstData;
 
 public class FileCreator {
 
@@ -109,15 +111,77 @@ public class FileCreator {
 	    	
 	    	writer.newLine();
 	    	writeString(rs.getString(2) + "   " + rs.getString(3) + "    " + rs.getBigDecimal(4) + "     " + rs.getInt(5));
-    		writer.newLine();
     		rs.next();
-	    	while (rs.getString(1) == serie) {
+    		
+    		while (rs != null && rs.getString(1).equals(serie)) {
 	    		writeString(rs.getString(2) + "   " + rs.getString(3) + "    " + rs.getBigDecimal(4) + "     " + rs.getInt(5));
 	    		writer.newLine();
 	    		rs.next();
-	    	}
+	    		
+			}
+    		
+    		writer.newLine();
+    			
+	    
+	    	
 	    }
 	    writer.close();
+	}
+	
+	public void writeCountryFirst(LinkedList<CountryFirstData> list) throws IOException {
+	
+
+		OpenOption[] options = {StandardOpenOption.CREATE, StandardOpenOption.WRITE};
+		Charset charset = Charset.forName("UTF-8");
+	    Path path = FileSystems.getDefault().getPath("output", "negativExceptions.txt");
+	    BufferedWriter writer = Files.newBufferedWriter(path, charset, options);
+	    this.writer = writer;
+	    
+		String country = "";
+	    
+	    Iterator<CountryFirstData> itr = list.iterator();
+	    
+	    
+	    // CHECK IF FIRST NOT MISSING !
+	    
+	    while(itr.hasNext()) {
+	    	
+	    	CountryFirstData current = itr.next();
+	    	
+	    	if (!country.equals(current.getCountry())) {
+
+	    		country = current.getCountry();
+	    		writer.newLine();
+	    		writeString(country);
+	    		writer.newLine();
+	    		writeString("---------------------------------------------------------------");
+	    		
+	    	}
+	    	
+	    	LinkedList<YearValueDuo> duo = current.getDuo();
+    		Collections.sort(duo);
+    		Iterator<YearValueDuo> duoItr = duo.iterator();
+    		
+    		// CHECK IF FIRST NOT MISSING
+    		while (duoItr.hasNext()) {
+    			YearValueDuo currentDuo = duoItr.next();
+    			writer.newLine();
+	    		writeString(current.getSerie() 
+	    				+ "            " 
+	    				+ current.getUnit() 
+	    				+ "           " 
+	    				+ currentDuo.getYear() 
+	    				+ "         " 
+	    				+ currentDuo.getValue());
+	    		
+	    		
+
+    		}
+    		writer.newLine();
+	    	
+	    }
+	    writer.close();
+		
 	}
 	
 	public void writeString(String msg) throws IOException {

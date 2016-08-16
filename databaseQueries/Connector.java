@@ -147,7 +147,7 @@ public class Connector {
 		query = query + "AND S.numero= V.ticker " +
 						"AND P.p_code= S.code_pays " +
 						"AND S.Numero=V.Ticker";
-		
+		System.out.println(query);
 		ResultSet rs = stmt.executeQuery(query);
 		
 		return rs;
