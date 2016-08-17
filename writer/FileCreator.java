@@ -130,6 +130,7 @@ public class FileCreator {
 	
 	public void writeCountryFirst(LinkedList<CountryFirstData> list) throws IOException {
 	
+		long writeCountryFirstStart = System.currentTimeMillis();
 
 		OpenOption[] options = {StandardOpenOption.CREATE, StandardOpenOption.WRITE};
 		Charset charset = Charset.forName("UTF-8");
@@ -140,7 +141,6 @@ public class FileCreator {
 		String country = "";
 	    
 	    Iterator<CountryFirstData> itr = list.iterator();
-	    
 	    
 	    // CHECK IF FIRST NOT MISSING !
 	    
@@ -174,14 +174,14 @@ public class FileCreator {
 	    				+ "         " 
 	    				+ currentDuo.getValue());
 	    		
-	    		
 
     		}
     		writer.newLine();
 	    	
 	    }
 	    writer.close();
-		
+	    long writeCountryFirstEnd = System.currentTimeMillis();
+		System.out.println("Temps writeCountry = " + ((writeCountryFirstEnd - writeCountryFirstStart)/1000000000));
 	}
 	
 	public void writeString(String msg) throws IOException {

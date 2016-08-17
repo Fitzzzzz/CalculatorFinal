@@ -84,6 +84,7 @@ public class TestGnacfinn {
 		long queryNegativStart = 0;
 		long queryNegativEnd = 0;
 		long writeStart = 0;
+		long writeEnd = 0;
 		
 		
 		try {
@@ -100,7 +101,7 @@ public class TestGnacfinn {
 			
 			writeStart = System.nanoTime();
 			exceptionCreated.writeCountryFirst(parser.sortCountryFirst());
-			
+			writeEnd = System.nanoTime();
 			
 		} catch (IOException e) {
 			System.out.println("Exceptions File couldn't be reached/read.");
@@ -122,7 +123,7 @@ public class TestGnacfinn {
 		System.out.println("Temps controle = " + ((controlEnd - startTime)/1000000000));
 		System.out.println("Temps negativ = " + ((stopTime - controlEnd)/1000000000));
 		System.out.println("Temps query negativ = " + ((queryNegativEnd - queryNegativStart)/1000000000));
-		System.out.println("Temps ecriture negative = " + ((stopTime - writeStart)/1000000000));
+		System.out.println("Temps ecriture negative et parsing = " + ((writeEnd - writeStart)/1000000000));
 		System.out.println("Temps total = " + ((stopTime - startTime)/1000000000));
 		
 		

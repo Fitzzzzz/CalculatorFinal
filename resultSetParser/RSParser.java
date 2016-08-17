@@ -21,6 +21,9 @@ public class RSParser {
 	
 	public LinkedList<CountryFirstData> sortCountryFirst() throws SQLException {
 		
+		long parsingStart = System.nanoTime();
+
+		
 		LinkedList<CountryFirstData> list = new LinkedList<CountryFirstData>();
 		
 		String serie;
@@ -29,7 +32,9 @@ public class RSParser {
 		BigDecimal value;
 		int year;
 		int index;
-		
+//		long indexOf = 0;
+//		int counter = 0;
+		rs.setFetchSize(5000);
 		while (rs.next()) {
 			
 			serie = rs.getString(1);
@@ -37,7 +42,12 @@ public class RSParser {
 			country = rs.getString(3);
 			value = rs.getBigDecimal(4);
 			year = rs.getInt(5);
-			if ((index = list.indexOf(new CountryFirstData(country, serie, unit))) != -1) {
+//			indexOf = System.nanoTime();
+			index = list.indexOf(new CountryFirstData(country, serie, unit));
+//			if (counter > 3950) {
+//				System.out.println((System.nanoTime() - indexOf));
+//			}
+			if (index != -1) {
 				
 				list.get(index).getDuo().add(new YearValueDuo(year, value));
 				
@@ -50,10 +60,20 @@ public class RSParser {
 				
 			}
 			
-			
+//			counter++;
 			
 		}
+		long parsingEnd = System.nanoTime();
+
 		Collections.sort(list);
+		
+		long sortEnd = System.nanoTime();
+
+//		System.out.println("index time = " + (indexOf/1000000000));
+		System.out.println("Parsing Time = " + ((parsingEnd - parsingStart)/1000000000));
+		System.out.println("Sorting Time = " + ((sortEnd - parsingEnd)/1000000000));
+
+		
 		return list;
 		
 	}
