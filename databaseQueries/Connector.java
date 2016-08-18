@@ -131,7 +131,7 @@ public class Connector {
 		return rs;
 	}
 	
-	public ResultSet queryAll(HashSet<String> except) throws SQLException {
+	public ResultSet queryAllNegativ(HashSet<String> except) throws SQLException {
 		
 		String query = 	"SELECT code_serie,unite,code_pays,valeur,tyear,p_titre_fra " +
 						"FROM Pays P,Series S,Valeurs_tab V " + 
@@ -146,7 +146,8 @@ public class Connector {
 		}
 		query = query + "AND S.numero= V.ticker " +
 						"AND P.p_code= S.code_pays " +
-						"AND S.Numero=V.Ticker";
+						"AND S.Numero=V.Ticker ";
+//		query = query + "ORDER BY  S.CODE_PAYS, unite, S.code_serie";
 		System.out.println(query);
 		ResultSet rs = stmt.executeQuery(query);
 		
@@ -155,6 +156,31 @@ public class Connector {
 		
 		
 	}
+	
+	public ResultSet queryCountryNegativ(HashSet<String> except, String country) throws SQLException {
+		
+		String query = 	"SELECT code_serie,unite,code_pays,valeur,tyear,p_titre_fra " +
+				"FROM Pays P,Series S,Valeurs_tab V " + 
+				"WHERE ROUND(V.valeur,6)<0 ";
+		String and = "AND S.code_serie NOT LIKE ";
+
+		Iterator<String> itr = except.iterator();
+		while (itr.hasNext()) {
+	
+			query = query + and + "'" + itr.next() + "' " ;
+	
+		}
+		query = query + "AND S.numero= V.ticker " +
+				"AND P.p_code= S.code_pays " +
+				"AND S.Numero=V.Ticker ";
+		query = query + "AND P.p_code='" + country + "'";
+		
+		ResultSet rs = stmt.executeQuery(query);
+		
+		return rs;
+		
+	}
+	
 	
 	public void close() throws SQLException {
 		

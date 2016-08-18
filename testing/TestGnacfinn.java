@@ -23,11 +23,13 @@ public class TestGnacfinn {
 		
 		long startTime = System.nanoTime();
 
-		
+		String negativCountry = "cog";
 		
 		EquationReader reader;
 		String codePays = "fra";
 		String exceptFile = "negativeExceptions.txt";
+		
+		boolean countryOnlyNegativ = true;
 		
 		
 		try {
@@ -92,8 +94,14 @@ public class TestGnacfinn {
 			Connector connection = new Connector();
 			
 			queryNegativStart = System.nanoTime();
+			RSParser parser;
 			
-			RSParser parser = new RSParser(connection.queryAll(exceptions));
+			if (countryOnlyNegativ) {
+				parser = new RSParser(connection.queryCountryNegativ(exceptions, negativCountry));
+			}
+			else {
+				parser = new RSParser(connection.queryAllNegativ(exceptions));
+			}
 			
 			queryNegativEnd = System.nanoTime();
 

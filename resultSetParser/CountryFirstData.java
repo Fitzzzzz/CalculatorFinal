@@ -6,9 +6,9 @@ import equationHandler.YearValueDuo;
 
 public class CountryFirstData implements Comparable<Object> {
 
-	private String country;
+	private String countryName;
 	public String getCountry() {
-		return country;
+		return countryName;
 	}
 
 
@@ -32,10 +32,10 @@ public class CountryFirstData implements Comparable<Object> {
 	private final LinkedList<YearValueDuo> duo = new LinkedList<YearValueDuo>();
 	
 	
-	public CountryFirstData(String country, String serie, String unit) {
+	public CountryFirstData(String countryName, String countryCode, String serie, String unit) {
 		
 		super();
-		this.country = country;
+		this.countryName = countryName;
 		this.serie = serie;
 		this.unit = unit;
 		
@@ -46,7 +46,7 @@ public class CountryFirstData implements Comparable<Object> {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((country == null) ? 0 : country.hashCode());
+		result = prime * result + ((countryName == null) ? 0 : countryName.hashCode());
 		result = prime * result + ((serie == null) ? 0 : serie.hashCode());
 		result = prime * result + ((unit == null) ? 0 : unit.hashCode());
 		return result;
@@ -62,10 +62,10 @@ public class CountryFirstData implements Comparable<Object> {
 		if (getClass() != obj.getClass())
 			return false;
 		CountryFirstData other = (CountryFirstData) obj;
-		if (country == null) {
-			if (other.country != null)
+		if (countryName == null) {
+			if (other.countryName != null)
 				return false;
-		} else if (!country.equals(other.country))
+		} else if (!countryName.equals(other.countryName))
 			return false;
 		if (serie == null) {
 			if (other.serie != null)
@@ -92,7 +92,7 @@ public class CountryFirstData implements Comparable<Object> {
 			return 0;
 		}
 		
-		if ((tmp = this.country.compareTo(compared.getCountry())) == 0) {
+		if ((tmp = this.countryName.compareTo(compared.getCountry())) == 0) {
 			if ((tmp = this.serie.compareTo(compared.getSerie())) == 0) {
 				return this.unit.compareTo(compared.getUnit());
 			}

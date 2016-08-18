@@ -14,6 +14,8 @@ import java.sql.SQLException;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.SortedSet;
 
 import equationHandler.YearValueDuo;
 import reader.EquationDatas;
@@ -128,9 +130,9 @@ public class FileCreator {
 	    writer.close();
 	}
 	
-	public void writeCountryFirst(LinkedList<CountryFirstData> list) throws IOException {
+	public void writeCountryFirst(List<CountryFirstData> list) throws IOException {
 	
-		long writeCountryFirstStart = System.currentTimeMillis();
+		long writeCountryFirstStart = System.nanoTime();
 
 		OpenOption[] options = {StandardOpenOption.CREATE, StandardOpenOption.WRITE};
 		Charset charset = Charset.forName("UTF-8");
@@ -154,7 +156,7 @@ public class FileCreator {
 	    		writer.newLine();
 	    		writeString(country);
 	    		writer.newLine();
-	    		writeString("---------------------------------------------------------------");
+	    		writeString("=========================================================================");
 	    		
 	    	}
 	    	
@@ -180,7 +182,7 @@ public class FileCreator {
 	    	
 	    }
 	    writer.close();
-	    long writeCountryFirstEnd = System.currentTimeMillis();
+	    long writeCountryFirstEnd = System.nanoTime();
 		System.out.println("Temps writeCountry = " + ((writeCountryFirstEnd - writeCountryFirstStart)/1000000000));
 	}
 	
