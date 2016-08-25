@@ -7,8 +7,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
 import java.util.Vector;
 
 import binaryTree.TreeBuilder;
@@ -27,11 +29,13 @@ public class Equation {
 	
 	private String country;
 	private String unit;
-	private float precision;
+	private double precision;
 	
 	private Connector connect;
 	
 	private String equationType;
+	
+	
 	
 	public Equation(EquationDatas datas, String country) throws ClassNotFoundException, SQLException, IncorrectEntryFormatException {
 		
@@ -79,8 +83,11 @@ public class Equation {
 		this.tokens = this.convertStringToToken(tmp);
 		
 		if (receiver.equals("0")) {
-			System.out.println("receiver equals 0, using " + tmp[0]);			
-			this.queryYears(tmp[0]);
+					
+			for (int i = datas.getStart(); i <= EquationDatas.getDefaultEndYear(); i++) {
+				this.years.add(i);
+			}
+			
 		}
 		else {
 			this.queryReceiverValue();
@@ -122,9 +129,9 @@ public class Equation {
 		return tokens;
 	}
 	
-	private final Set<Integer> years = new HashSet<Integer>();
+	private final List<Integer> years = new LinkedList<Integer>();
 	
- 	public Set<Integer> getYears() {
+ 	public List<Integer> getYears() {
 		return years;
 	}
 
@@ -241,25 +248,7 @@ public class Equation {
 		}
 	}
 	
-	private void queryYears(String serie) {
-		try {
-			ResultSet rs = connect.queryYears(serie);
-			System.out.println("in query Years : connect done");
-			while (rs.next()) {
-				
-				System.out.println("Adding a year to years");
-				int year = rs.getInt(1);
-				System.out.println(year);
-				years.add(year);
-				
-			}	
 
-			
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
 	
 	
 	// queryYears or queryReceiverValue need to have been called
@@ -313,14 +302,21 @@ public class Equation {
 			BigDecimal value = bodyMap.get(year);
 
 			// if the difference between the expected result and the result is smaller or equal to 0.5
-			if (value.abs().compareTo(new BigDecimal(this.precision)) <= 0) {
-				resultMap.put(year, true);
+			if (value == null) {
+				System.out.println("value is null for " + year);
 			}
-			// if it's higher
 			else {
-				resultMap.put(year, false);
-				errors.addLast(new YearValueDuo(year, value));
+				if (value.abs().compareTo(new BigDecimal(this.precision)) <= 0) {
+					resultMap.put(year, true);
+				}
+				else {
+					resultMap.put(year, false);
+					errors.addLast(new YearValueDuo(year, value));
+				}
 			}
+			
+			// if it's higher
+			
 		}
 		return errors;
 	}
@@ -335,13 +331,18 @@ public class Equation {
 			Integer year = itr.next();
 			BigDecimal value = bodyMap.get(year);
 			// if the difference between the expected result and the result is smaller or equal to 0.5
-			if (value.compareTo(BigDecimal.ZERO) <= 0) {
-				resultMap.put(year, true);
+			if (value == null) {
+				System.out.println("value is null for " + year);
 			}
-			// if it's higher
 			else {
-				resultMap.put(year, false);
-				errors.addLast(new YearValueDuo(year, value));
+				if (value.compareTo(BigDecimal.ZERO) <= 0) {
+					resultMap.put(year, true);
+				}
+				// if it's higher
+				else {
+					resultMap.put(year, false);
+					errors.addLast(new YearValueDuo(year, value));
+				}
 			}
 		}
 		return errors;
@@ -358,13 +359,19 @@ public class Equation {
 			System.out.println(year);
 			BigDecimal value = bodyMap.get(year);
 			// if the difference between the expected result and the result is smaller or equal to 0.5
-			if (value.compareTo(BigDecimal.ZERO) >= 0) {
+			if (value == null) {
+				System.out.println("value is null for " + year);
+			}
+			else {
+				
+				if (value.compareTo(BigDecimal.ZERO) >= 0) {
 				resultMap.put(year, true);
 			}
-			// if it's higher
-			else {
-				resultMap.put(year, false);
-				errors.addLast(new YearValueDuo(year, value));
+				// if it's higher
+				else {
+					resultMap.put(year, false);
+					errors.addLast(new YearValueDuo(year, value));
+				}
 			}
 		}
 		return errors;

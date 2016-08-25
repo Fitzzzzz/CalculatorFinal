@@ -33,7 +33,7 @@ public class FileCreator {
 
 	}
 	
-	public void write(LinkedList<EquationDatas> equations) throws IOException {
+	public void write(LinkedList<EquationDatas> equations, String country) throws IOException {
 		
 		OpenOption[] options = {StandardOpenOption.CREATE, StandardOpenOption.WRITE};
 		Charset charset = Charset.forName("UTF-8");
@@ -41,15 +41,21 @@ public class FileCreator {
 	    BufferedWriter writer = Files.newBufferedWriter(path, charset, options);
 	    this.writer = writer;
 		Iterator<EquationDatas> itr = equations.iterator();
-		writeString("FRA");
+		
+		writeString("Country : " + country);
+		writer.newLine();
+		writer.newLine();
+		
 		while (itr.hasNext()) {
 			
+			String space = "        ";
 			
 			System.out.println("itr Has next!");
 			EquationDatas current = itr.next();
 			LinkedList<YearValueDuo> errors = current.getErrors();
 			
 			if (!errors.isEmpty()) {
+				System.out.println("errors is not empty");
 				writer.newLine();
 				writer.newLine();
 				writeString("Equation : " + current.getEquation());

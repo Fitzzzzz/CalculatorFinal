@@ -26,7 +26,7 @@ public class TestGnacfinn {
 		String negativCountry = "cog";
 		
 		EquationReader reader;
-		String codePays = "fra";
+		String codePays = "chn";
 		String exceptFile = "negativeExceptions.txt";
 		
 		boolean countryOnlyNegativ = true;
@@ -52,12 +52,13 @@ public class TestGnacfinn {
 						
 						TreePrinter.print(tree.getTree());
 						
-						
+						System.out.println(eq.getEquation() + " starting querybody");
 						eq.queryBodyValue(tree);
-						
+						System.out.println(eq.getEquation() + " starting compare");
 						current.setErrors(eq.compare());
-						
+						System.out.println(eq.getEquation() + " starting printbody");
 						eq.printBody();
+						System.out.println(eq.getEquation() + " starting printmissing");
 						eq.printMissingValues();
 						
 						eq.closeConnection();
@@ -68,18 +69,21 @@ public class TestGnacfinn {
 						e.printStackTrace();
 					} catch (IncorrectEntryFormatException e) {
 						System.out.println(e.getErrorMsg());
-					}
+						
+					} 
+					
 			}
 		
 			String fileName = "file.txt";
 			FileCreator writer = new FileCreator(fileName);
-			writer.write(reader.getEquations());
+			writer.write(reader.getEquations(), codePays);
 			
 			
 		} catch (IOException e) {
 			System.out.println("Couldn't read the entry file 'equations'.");
 			e.printStackTrace();
-		}
+		} 
+		
 		long controlEnd = System.nanoTime();
 
 		EquationReader exceptionReader = new EquationReader(exceptFile);
