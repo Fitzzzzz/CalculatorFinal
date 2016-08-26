@@ -52,13 +52,13 @@ public class TestGnacfinn {
 						
 						TreePrinter.print(tree.getTree());
 						
-						System.out.println(eq.getEquation() + " starting querybody");
+//						System.out.println(eq.getEquation() + " starting querybody");
 						eq.queryBodyValue(tree);
-						System.out.println(eq.getEquation() + " starting compare");
+//						System.out.println(eq.getEquation() + " starting compare");
 						current.setErrors(eq.compare());
-						System.out.println(eq.getEquation() + " starting printbody");
+//						System.out.println(eq.getEquation() + " starting printbody");
 						eq.printBody();
-						System.out.println(eq.getEquation() + " starting printmissing");
+//						System.out.println(eq.getEquation() + " starting printmissing");
 						eq.printMissingValues();
 						
 						eq.closeConnection();

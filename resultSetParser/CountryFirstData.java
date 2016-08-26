@@ -6,6 +6,14 @@ import equationHandler.YearValueDuo;
 
 public class CountryFirstData implements Comparable<Object> {
 
+	
+	private String countryCode;
+	
+	public String getCountryCode() {
+		return countryCode;
+	}
+
+
 	private String countryName;
 	public String getCountry() {
 		return countryName;
@@ -35,6 +43,7 @@ public class CountryFirstData implements Comparable<Object> {
 	public CountryFirstData(String countryName, String countryCode, String serie, String unit) {
 		
 		super();
+		this.countryCode= countryCode;
 		this.countryName = countryName;
 		this.serie = serie;
 		this.unit = unit;
