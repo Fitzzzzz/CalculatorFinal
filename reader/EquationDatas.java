@@ -4,8 +4,15 @@ import java.util.Calendar;
 import java.util.LinkedList;
 
 import equationHandler.YearValueDuo;
-import testing.Config;
+import execution.Config;
 
+
+
+/**
+ * 
+ * @author hamme
+ *
+ */
 public class EquationDatas {
 
 	public String getEquation() {
@@ -40,6 +47,9 @@ public class EquationDatas {
 		return argumentsNb;
 	}
 
+	/**
+	 * The input line. Contains the equation and its parameters.
+	 */
 	private String[] line;
 	private String equation;
 	private String unit;
@@ -50,7 +60,7 @@ public class EquationDatas {
 	private String temporality;
 	private static final int defaultStartYear = 1971;
 	private static final double defaultPrecision = 0.05;
-	private static final int defaultEndYear = 2016; // TODO : CHANGE TO CURRENT YEAR
+	private static final int defaultEndYear = Calendar.getInstance().get(Calendar.YEAR); // TODO : CHANGE TO CURRENT YEAR
 	
 	
 	private int argumentsNb;

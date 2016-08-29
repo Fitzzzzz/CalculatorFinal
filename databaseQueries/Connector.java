@@ -8,7 +8,7 @@ import java.sql.Statement;
 import java.util.HashSet;
 import java.util.Iterator;
 
-import testing.Config;
+import execution.Config;
 
 public class Connector {
 

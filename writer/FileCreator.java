@@ -3,7 +3,6 @@ package writer;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.math.RoundingMode;
 import java.nio.charset.Charset;
 import java.nio.file.FileSystems;
@@ -11,13 +10,10 @@ import java.nio.file.Files;
 import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.SortedSet;
 
 import equationHandler.YearValueDuo;
 import reader.EquationDatas;
@@ -37,7 +33,7 @@ public class FileCreator {
 	
 	public void write(LinkedList<EquationDatas> equations, String country) throws IOException {
 		
-		OpenOption[] options = {StandardOpenOption.CREATE, StandardOpenOption.WRITE};
+		OpenOption[] options = {StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.APPEND};
 		Charset charset = Charset.forName("UTF-8");
 	    Path path = FileSystems.getDefault().getPath("output", fileName);
 	    BufferedWriter writer = Files.newBufferedWriter(path, charset, options);
@@ -112,6 +108,8 @@ public class FileCreator {
 		writer.newLine();
 		writer.newLine();
 		writeString("====================================================================================");
+		writer.newLine();
+		writer.newLine();
 		writer.close();
 		
 		
@@ -162,7 +160,7 @@ public class FileCreator {
     			int currentYear = currentDuo.getYear();
     			BigDecimal currentValue = currentDuo.getValue();
     			
-    			String space = calculateSpace(currentSerie.length(), defaultSpace);
+    		
     			
     			String toWrite = currentSerie + calculateSpace(currentSerie.length(), defaultSpace)
     								+ currentUnit + calculateSpace(currentUnit.length(), defaultSpace)

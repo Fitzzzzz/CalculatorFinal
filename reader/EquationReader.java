@@ -2,15 +2,31 @@ package reader;
 
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.LinkedList;
 
 import com.opencsv.CSVReader;
 
+/**
+ * A parser designed to read the equations to check from an external file.
+ * @author hamme
+ *
+ */
 public class EquationReader {
 	
-	public String fileName = "equationsFinal.txt";
+	/**
+	 * The name of the file containing the equations. Uses openCSV as reading tool.
+	 */
+	public String fileName = "equations.txt";
 	
+	/**
+	 * The equations.
+	 */
+	private final LinkedList<EquationDatas> equations = new LinkedList<EquationDatas>();
+	
+	/**
+	 * Constructor.
+	 * @throws IOException if the equations file isn't accessible.
+	 */
 	public EquationReader() throws IOException {
 		
 		FileReader fr = new FileReader(fileName);
@@ -21,6 +37,8 @@ public class EquationReader {
 		String[] nextLine;
 		while ((nextLine = reader.readNext()) != null) {
 			
+			// Will try to add the currently read line to the equations list, creating a EquationDatas.
+			// Will throw an IncorrectEntryFormatException if the equation doesn't respect the expected format.
 			try {
 				System.out.println("Line about to start = " + currentLine);
 				equations.add(new EquationDatas(nextLine));
@@ -43,32 +61,9 @@ public class EquationReader {
 		
 	}
 
-	public EquationReader(String fileName) {
-		
-		this.fileName = fileName;
-		
-	}
 	
-	public HashSet<String> readAllFile() throws IOException {
-		
-		FileReader fr = new FileReader(fileName);
-		CSVReader reader = new CSVReader(fr, ';');
-		String[] nextLine;
-		
-		HashSet<String> file = new HashSet<String>();
-		
-		while ((nextLine = reader.readNext()) != null) {
-			for (int i = 0; i < nextLine.length; i++)
-				file.add(nextLine[i]);
-			
-		}
-		reader.close();
-		return file;
-		
-	}
 	
-	private final LinkedList<EquationDatas> equations = new LinkedList<EquationDatas>();
-
+	
 	public LinkedList<EquationDatas> getEquations() {
 		return equations;
 	}
