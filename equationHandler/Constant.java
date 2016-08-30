@@ -18,7 +18,7 @@ public class Constant extends Operand {
 
 	@Override
 	public BigDecimal getValue(int year) {
-		// TODO Auto-generated method stub
+		
 		return new BigDecimal(this.getValue());
 	} 
 	

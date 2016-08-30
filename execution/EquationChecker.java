@@ -9,6 +9,7 @@ import arithmeticParsing.Parser;
 import binaryTree.TreeBuilder;
 import binaryTree.TreePrinter;
 import equationHandler.Equation;
+import reader.Configuration;
 import reader.CountriesReader;
 import reader.EquationDatas;
 import reader.EquationReader;
@@ -21,14 +22,26 @@ public class EquationChecker {
 	public static void main(String[] args) {		
 		
 		EquationReader reader;
-		LinkedList<String> countries = null;
 
+		// The countries to check
+		LinkedList<String> countries = null;
+		
+		Configuration config = null;
 		try {
-			countries = CountriesReader.readFile("equationCountries.txt");
+			config = new Configuration("configuration.txt");
+		} catch (IOException e2) {
+			System.out.println("IOException while reading configuration.txt. Make sure you respect the requirements in this file. ");
+			e2.printStackTrace();
+		}
+		
+		
+		
+		try {
+			countries = CountriesReader.readCountries("equationCountries.txt");
 		} catch (IncorrectCountryEntryException e1) {
 			System.out.println(e1.getErrorMessage());
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			
 			System.out.println("IO Exception concerning equationsCountries.txt");
 			e.printStackTrace();
 		}
@@ -36,7 +49,7 @@ public class EquationChecker {
 		
 		
 		try {
-			reader = new EquationReader();
+			reader = new EquationReader(config);
 			String fileName = "file.txt";
 			FileCreator writer = new FileCreator(fileName);
 			
@@ -55,20 +68,20 @@ public class EquationChecker {
 					Equation eq;
 					
 						try {
-							eq = new Equation(current, country);
+							eq = new Equation(current, country, config);
 							Parser tokenParser = new Parser(eq.getTokens());
 
 							TreeBuilder tree = new TreeBuilder(tokenParser.getOutput());
 							
-							TreePrinter.print(tree.getTree());
+//							TreePrinter.print(tree.getTree());
 							
-//							System.out.println(eq.getEquation() + " starting querybody");
+
 							eq.queryBodyValue(tree);
-//							System.out.println(eq.getEquation() + " starting compare");
+
 							current.setErrors(eq.compare());
-//							System.out.println(eq.getEquation() + " starting printbody");
-							eq.printBody();
-//							System.out.println(eq.getEquation() + " starting printmissing");
+
+//							eq.printBody();
+
 							eq.printMissingValues();
 							
 							eq.closeConnection();
@@ -85,7 +98,7 @@ public class EquationChecker {
 				}
 			
 				
-				writer.write(reader.getEquations(), country);
+				writer.write(reader.getEquations(), country, config);
 				
 				
 			}

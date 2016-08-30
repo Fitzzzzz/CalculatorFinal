@@ -13,7 +13,7 @@ public class TreeBuilder {
 	public TreeBuilder(LinkedList<Token> list) {
 		
 
-		System.out.println(list);
+//		System.out.println(list);
 		this.tree = new Node();
 		constructTree(list, tree);
 //		System.out.println(list);
@@ -38,7 +38,7 @@ public class TreeBuilder {
 		
 		while (!list.isEmpty()) {
 	
-			System.out.println(list.peekLast().toString());
+//			System.out.println(list.peekLast().toString());
 			
 			if (tmp.getValue().getType() == 1) {
 				tmp.setLeftSon(new Node(tmp, list.removeLast()));

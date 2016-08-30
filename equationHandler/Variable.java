@@ -19,7 +19,7 @@ public class Variable extends Operand {
 
 	public Variable(String name, String country, String unit, Connector connect) throws ClassNotFoundException, SQLException {
 		super(name);
-		System.out.print("Variable " + name + " starting");
+//		System.out.print("Variable " + name + " starting");
 		this.connect = connect;
 		this.queryValue(country);
 		this.connect = connect;
@@ -45,15 +45,15 @@ public class Variable extends Operand {
 		if (!empty) {
 			BigDecimal value = entryMap.get(year);
 			if (value == null) {
-				System.out.println("UNEXPECTED MISSING");
+//				System.out.println("UNEXPECTED MISSING");
 				throw new UnexpectedMissingValueException(super.getName(), year);
 			}
 			else {
-				System.out.println(this.getName() + " : " + value);
+//				System.out.println(this.getName() + " : " + value);
 				return value;
 			}
 		}
-		System.out.println(super.getName() + " is empty");
+//		System.out.println(super.getName() + " is empty");
 		return BigDecimal.ZERO;
 	
 	}

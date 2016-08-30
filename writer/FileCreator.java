@@ -10,12 +10,15 @@ import java.nio.file.Files;
 import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.sql.SQLException;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import databaseQueries.Connector;
 import equationHandler.YearValueDuo;
+import reader.Configuration;
 import reader.EquationDatas;
 import resultSetParser.CountryFirstData;
 
@@ -31,7 +34,7 @@ public class FileCreator {
 
 	}
 	
-	public void write(LinkedList<EquationDatas> equations, String country) throws IOException {
+	public void write(LinkedList<EquationDatas> equations, String countryCode, Configuration config) throws IOException {
 		
 		OpenOption[] options = {StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.APPEND};
 		Charset charset = Charset.forName("UTF-8");
@@ -39,8 +42,15 @@ public class FileCreator {
 	    BufferedWriter writer = Files.newBufferedWriter(path, charset, options);
 	    this.writer = writer;
 		Iterator<EquationDatas> itr = equations.iterator();
-		
-		writeString(country + " (code?)"); // TODO : ask for country code if coutnry given, the opposite otherwise
+		String country;
+		try {
+			country = Connector.queryCountryFromCode(countryCode, config);
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+			System.out.println("Couldn't access to country name from country code : '" + countryCode + "'");
+			country = "";
+		}
+		writeString(country + " (" + countryCode + ") "); 
 		writer.newLine();
 		writeString("====================================================================================");
 		
@@ -52,12 +62,12 @@ public class FileCreator {
 			
 			
 			
-			System.out.println("itr Has next!"); // TODO : remove
+			
 			EquationDatas current = itr.next();
 			LinkedList<YearValueDuo> errors = current.getErrors();
 			
 			if (!errors.isEmpty()) {
-				System.out.println("errors is not empty"); // TODO : remove
+				
 				writer.newLine();
 				writer.newLine();
 				writeString("Equation : " + current.getEquation());
@@ -137,11 +147,11 @@ public class FileCreator {
 	    	
 	    	CountryFirstData current = itr.next();
 	    	
-	    	if (!country.equals(current.getCountry())) {
+	    	if (!country.equals(current.getCountryCode())) {
 
-	    		country = current.getCountry();
+	    		country = current.getCountryCode();
 	    		writer.newLine();
-	    		writeString(country + " (" + current.getCountryCode() + ")");
+	    		writeString(current.getCountry() + " (" + country + ")");
 	    		writer.newLine();
 	    		writeString("================================================================================");
 	    		

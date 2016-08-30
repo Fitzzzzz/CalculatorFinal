@@ -3,9 +3,14 @@ package execution;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
 
 import databaseQueries.Connector;
+import reader.Configuration;
+import reader.CountriesReader;
 import reader.ExceptionsReader;
+import reader.IncorrectCountryEntryException;
 import resultSetParser.RSParser;
 import writer.FileCreator;
 
@@ -25,34 +30,62 @@ public class NegativeChecker {
 		long writeEnd = 0;
 		
 		
+		Configuration config = null;
 		try {
+			config = new Configuration("configuration.txt");
+		} catch (IOException e2) {
+			System.out.println("IOException while reading configuration.txt. Make sure you respect the requirements in this file. ");
+			e2.printStackTrace();
+		}
+		
+		try {
+			
+			
+			
+					
 			HashSet<String> exceptions = exceptionReader.readAllFile();
-			Connector connection = new Connector();
+			Connector connection = new Connector(config);
 			
 			queryNegativStart = System.nanoTime();
 			RSParser parser;
 			
+			LinkedList<String> countries = CountriesReader.readCountriesTP("negativCountries.txt");
+			Iterator<String> countryItr = countries.iterator();
 			
-			parser = new RSParser(connection.queryAllNegativ(exceptions));
+			String country = countryItr.next();
 			
+			if (country.equals("TP")) {
+				
+				parser = new RSParser(connection.queryAllNegativ(exceptions));
+				
+			}
+			
+			else {
+				
+				parser = new RSParser(connection.queryCountriesNegativ(exceptions, countries));
+				
+			}
 			
 			queryNegativEnd = System.nanoTime();
 
 			FileCreator exceptionCreated = new FileCreator(exceptFile);
-			
-			writeStart = System.nanoTime();
 			exceptionCreated.writeCountryFirst(parser.sortCountryFirst());
-			writeEnd = System.nanoTime();
+			
+			
+			
+			
 			
 		} catch (IOException e) {
 			System.out.println("Exceptions File couldn't be reached/read.");
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
+			System.out.println("ClassNotFoundException, Stack trace following");
 			e.printStackTrace();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			System.out.println("SQLException, Stack trace following");
 			e.printStackTrace();
+		} catch (IncorrectCountryEntryException e) {
+			System.out.println(e.getErrorMessage());
 		}
 		
 		

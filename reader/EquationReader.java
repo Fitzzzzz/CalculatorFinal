@@ -8,6 +8,8 @@ import com.opencsv.CSVReader;
 
 /**
  * A parser designed to read the equations to check from an external file.
+ * Equations should be written following this principle : The equation followed by a ";" and then unit
+ * Don't add any extra spaces and use '>', '=' or '<' alone. ('<=' isn't accepted)
  * @author hamme
  *
  */
@@ -27,7 +29,7 @@ public class EquationReader {
 	 * Constructor.
 	 * @throws IOException if the equations file isn't accessible.
 	 */
-	public EquationReader() throws IOException {
+	public EquationReader(Configuration config) throws IOException {
 		
 		FileReader fr = new FileReader(fileName);
 		CSVReader reader = new CSVReader(fr, ';');
@@ -40,8 +42,8 @@ public class EquationReader {
 			// Will try to add the currently read line to the equations list, creating a EquationDatas.
 			// Will throw an IncorrectEntryFormatException if the equation doesn't respect the expected format.
 			try {
-				System.out.println("Line about to start = " + currentLine);
-				equations.add(new EquationDatas(nextLine));
+//				System.out.println("Line about to start = " + currentLine);
+				equations.add(new EquationDatas(nextLine, config));
 			} catch (IncorrectEntryFormatException e) {
 				System.out.print("Equation : \"");
 				for (int i = 0; i < nextLine.length; i++) {
@@ -51,7 +53,7 @@ public class EquationReader {
 			}
 			catch (ArrayIndexOutOfBoundsException e) {
 				System.out.println("ArrayIndexOutOfBoundsException at line " + currentLine 
-						+ ". Be careful no that add any extra empty line at the end of the file.");
+						+ ". Be careful not that add any extra empty line at the end of the file.");
 			}
 			currentLine++;
 		}
@@ -61,7 +63,6 @@ public class EquationReader {
 		
 	}
 
-	
 	
 	
 	public LinkedList<EquationDatas> getEquations() {

@@ -101,7 +101,7 @@ public class CountryFirstData implements Comparable<Object> {
 			return 0;
 		}
 		
-		if ((tmp = this.countryName.compareTo(compared.getCountry())) == 0) {
+		if ((tmp = this.countryCode.compareTo(compared.getCountryCode())) == 0) {
 			if ((tmp = this.serie.compareTo(compared.getSerie())) == 0) {
 				return this.unit.compareTo(compared.getUnit());
 			}

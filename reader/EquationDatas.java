@@ -4,7 +4,6 @@ import java.util.Calendar;
 import java.util.LinkedList;
 
 import equationHandler.YearValueDuo;
-import execution.Config;
 
 
 
@@ -76,20 +75,20 @@ public class EquationDatas {
 	}
 
 	
-	public EquationDatas(String[] line) throws IncorrectEntryFormatException {
+	public EquationDatas(String[] line, Configuration config) throws IncorrectEntryFormatException {
 		
 		this.argumentsNb = line.length;
-		System.out.println(argumentsNb + "     " + line.length);
+//		System.out.println(argumentsNb + "     " + line.length);
 		this.line = line;
 		this.equation = line[0];
 		this.unit = line[1];
 		
-		for (int i = 0; i < line.length; i++) {
-			System.out.println("+   " + line[i]);
-		}
+//		for (int i = 0; i < line.length; i++) {
+//			System.out.println("+   " + line[i]);
+//		}
 		
 		if (argumentsNb == 2) {
-			this.database = Config.database;
+			this.database = config.getDatabase();
 			this.precision = defaultPrecision;
 			this.start = defaultStartYear;
 		}
@@ -111,7 +110,7 @@ public class EquationDatas {
 			}
 		}
 		else if (argumentsNb == 3 || argumentsNb == 6) {
-			this.database = Config.database;
+			this.database = config.getDatabase();
 			if (line[2] == "") {
 				throw new IncorrectEntryFormatException(this.equation, "Incorrect Entry Format, no ';' shoud end a line.");
 			}

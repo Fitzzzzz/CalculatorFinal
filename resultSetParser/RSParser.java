@@ -119,6 +119,10 @@ public class RSParser {
 		
 	}
 	
+	
+	
+	
+	
 //	public LinkedList<CountryFirstData> sortCountryFirst() throws SQLException {
 //		
 //		long parsingStart = System.nanoTime();

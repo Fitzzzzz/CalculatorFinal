@@ -16,6 +16,7 @@ import java.util.Vector;
 import binaryTree.TreeBuilder;
 import databaseQueries.Connector;
 import databaseQueries.UnexpectedMissingValueException;
+import reader.Configuration;
 import reader.EquationDatas;
 import reader.IncorrectEntryFormatException;
 public class Equation {
@@ -37,7 +38,7 @@ public class Equation {
 	
 	
 	
-	public Equation(EquationDatas datas, String country) throws ClassNotFoundException, SQLException, IncorrectEntryFormatException {
+	public Equation(EquationDatas datas, String country, Configuration config) throws ClassNotFoundException, SQLException, IncorrectEntryFormatException {
 		
 		
 		
@@ -77,7 +78,7 @@ public class Equation {
 		tmp = this.split(tmp, OPENPARENTHESES);	
 		tmp = this.split(tmp, CLOSEPARENTHESES);	
 		
-		this.connect = new Connector(unit, country);
+		this.connect = new Connector(unit, country, config);
 		
 		
 		this.tokens = this.convertStringToToken(tmp);
@@ -146,7 +147,7 @@ public class Equation {
 	private String[] split(String[] toSplit, PriorityToken separator) {
 		
 		
-		String operator = separator.getName(); // TODO: Ugly
+		String operator = separator.getName(); 
 		
 		String[] tmp;
 		String[] tmp2 = new String[0];
@@ -218,7 +219,7 @@ public class Equation {
 					try {
 						converted[i] = new Variable(toConvert[i], this.country, this.unit, this.connect);
 					} catch (ClassNotFoundException | SQLException e1) {
-						// TODO Auto-generated catch block
+						System.out.println("ClassNotFoundException  or SQLException when querying for values. Stacktrace following : ");
 						e1.printStackTrace();
 					}
 					series.add(toConvert[i]);
@@ -243,7 +244,7 @@ public class Equation {
 			}	
 
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			System.out.println("SQLException while trying to query " + this.getReceiver());
 			e.printStackTrace();
 		}
 	}
@@ -258,7 +259,7 @@ public class Equation {
 		Iterator<Integer> itr = years.iterator();
 		while (itr.hasNext()) {
 			Integer year = itr.next();
-			System.out.println(year + " : ");
+//			System.out.println(year + " : ");
 			try {
 				bodyMap.put(year, tree.postOrderEvaluation(year));
 			} catch (UnexpectedMissingValueException e) {
@@ -356,7 +357,7 @@ public class Equation {
 		
 		while (itr.hasNext()) {
 			Integer year = itr.next();
-			System.out.println(year);
+//			System.out.println(year);
 			BigDecimal value = bodyMap.get(year);
 			// if the difference between the expected result and the result is smaller or equal to 0.5
 			if (value == null) {
@@ -390,7 +391,7 @@ public class Equation {
 	
 	public void printBody() {
 		
-		System.out.println("We in printBody");
+		System.out.println("printBody starting");
 		Iterator<Integer> itr = years.iterator();
 		while (itr.hasNext()) {
 			Integer year = itr.next();
@@ -405,7 +406,7 @@ public class Equation {
 		while (itr.hasNext()) {
 			
 			String serie = itr.next();
-			System.out.println("iterating on " + serie);
+//			System.out.println("iterating on " + serie);
 			Set<Integer> missingYears = missingValues.get(serie);
 			if (missingYears != null) {
 				Iterator<Integer> itrYears = missingYears.iterator();

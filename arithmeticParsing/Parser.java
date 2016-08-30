@@ -32,8 +32,8 @@ public class Parser {
 		
 		
 		LinkedList<Token> stack = new LinkedList<Token>();
-		this.printLList(stack);
-		this.printLList(output);
+//		this.printLList(stack);
+//		this.printLList(output);
 		for (int i = 0; i < equation.length; i++) {
 			
 			Token tmp = equation[i];
@@ -69,17 +69,17 @@ public class Parser {
 					stack.pop();
 				}
 			}
-			System.out.println("-----------------------");
-			System.out.println("              " + output );
-			System.out.println(stack );
+//			System.out.println("-----------------------");
+//			System.out.println("              " + output );
+//			System.out.println(stack );
 		}
 		
 		while (!stack.isEmpty()) {
 			// If Parenthesis : BUG
 			output.addLast(stack.pop());
-			System.out.println("----------------------");
-			System.out.println("              " + output );
-			System.out.println(stack );
+//			System.out.println("----------------------");
+//			System.out.println("              " + output );
+//			System.out.println(stack );
 		}
 	}
 	
