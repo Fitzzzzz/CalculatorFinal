@@ -267,7 +267,7 @@ public class Equation {
 				bodyMap.put(year, tree.postOrderEvaluation(year));
 			} catch (UnexpectedMissingValueException e) {
 				
-				System.out.println("in queryBodyValue catched UnexpectedMissingValueException");
+//				System.out.println("in queryBodyValue catched UnexpectedMissingValueException");
 				if (missingValues.get(e.getSerie()) == null) {
 					Set<Integer> missingYears = new HashSet<Integer>();
 					missingYears.add(e.getYear());
@@ -306,10 +306,7 @@ public class Equation {
 			BigDecimal value = bodyMap.get(year);
 
 			// if the difference between the expected result and the result is smaller or equal to 0.5
-			if (value == null) {
-				System.out.println("value is null for " + year);
-			}
-			else {
+			if (value != null) {
 				if (value.abs().compareTo(new BigDecimal(this.precision)) <= 0) {
 					resultMap.put(year, true);
 				}
@@ -335,10 +332,8 @@ public class Equation {
 			Integer year = itr.next();
 			BigDecimal value = bodyMap.get(year);
 			// if the difference between the expected result and the result is smaller or equal to 0.5
-			if (value == null) {
-				System.out.println("value is null for " + year);
-			}
-			else {
+			
+			if (value != null) {
 				if (value.compareTo(BigDecimal.ZERO) <= 0) {
 					resultMap.put(year, true);
 				}
@@ -363,14 +358,11 @@ public class Equation {
 //			System.out.println(year);
 			BigDecimal value = bodyMap.get(year);
 			// if the difference between the expected result and the result is smaller or equal to 0.5
-			if (value == null) {
-				System.out.println("value is null for " + year);
-			}
-			else {
+			if (value != null) {
 				
 				if (value.compareTo(BigDecimal.ZERO) >= 0) {
 				resultMap.put(year, true);
-			}
+				}
 				// if it's higher
 				else {
 					resultMap.put(year, false);

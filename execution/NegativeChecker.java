@@ -19,7 +19,7 @@ public class NegativeChecker {
 	public static void main(String[] args) {
 		
 		long startTime = System.nanoTime();
-		String exceptFile = "negativeExceptions.txt";
+		String exceptFile = "negativCountries.txt";
 		
 		long controlEnd = System.nanoTime();
 
@@ -49,7 +49,7 @@ public class NegativeChecker {
 			queryNegativStart = System.nanoTime();
 			RSParser parser;
 			
-			LinkedList<String> countries = CountriesReader.readCountriesTP("negativCountries.txt");
+			LinkedList<String> countries = CountriesReader.readCountriesTP("equationCountries.txt");
 			Iterator<String> countryItr = countries.iterator();
 			
 			String country = countryItr.next();

@@ -22,7 +22,7 @@ public class EquationChecker {
 	public static void main(String[] args) {		
 		
 		int endYear;
-		if (args == null) {
+		if (args.length == 0) {
 			endYear = Calendar.getInstance().get(Calendar.YEAR);
 		}
 		else {
@@ -59,7 +59,7 @@ public class EquationChecker {
 		
 		try {
 			reader = new EquationReader(config);
-			String fileName = "file.txt";
+			String fileName = "CTREnergie.txt";
 			FileCreator writer = new FileCreator(fileName);
 			
 			Iterator<String> countryItr = countries.iterator();
@@ -92,7 +92,7 @@ public class EquationChecker {
 							
 //							eq.printBody();
 
-							eq.printMissingValues();
+//							eq.printMissingValues();
 							
 							eq.closeConnection();
 							
