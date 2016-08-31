@@ -10,7 +10,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedSet;
 import java.util.Vector;
 
 import binaryTree.TreeBuilder;
@@ -38,7 +37,7 @@ public class Equation {
 	
 	
 	
-	public Equation(EquationDatas datas, String country, Configuration config) throws ClassNotFoundException, SQLException, IncorrectEntryFormatException {
+	public Equation(EquationDatas datas, String country, Configuration config, int endYear) throws ClassNotFoundException, SQLException, IncorrectEntryFormatException {
 		
 		
 		
@@ -85,7 +84,7 @@ public class Equation {
 		
 		if (receiver.equals("0")) {
 					
-			for (int i = datas.getStart(); i <= EquationDatas.getDefaultEndYear(); i++) {
+			for (int i = datas.getStart(); i <= endYear; i++) {
 				this.years.add(i);
 			}
 			
@@ -142,7 +141,11 @@ public class Equation {
  	
  	private final Map<String, Set<Integer>> missingValues = new HashMap<String, Set<Integer>>();
 
- 	private final Set<String> series = new HashSet<String>();
+ 	public Map<String, Set<Integer>> getMissingValues() {
+		return missingValues;
+	}
+
+	private final Set<String> series = new HashSet<String>();
 
 	private String[] split(String[] toSplit, PriorityToken separator) {
 		

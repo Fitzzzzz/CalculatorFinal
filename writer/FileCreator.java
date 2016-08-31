@@ -15,6 +15,8 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import databaseQueries.Connector;
 import equationHandler.YearValueDuo;
@@ -106,6 +108,31 @@ public class FileCreator {
 					
 					
 				}
+			}
+			Map<String, Set<Integer>> missing = current.getMissing();
+			
+			if (!missing.isEmpty()) {
+				writer.newLine();
+				Iterator<String> seriesItr = missing.keySet().iterator();
+				while (seriesItr.hasNext()) {
+					String serie = seriesItr.next();
+					Set<Integer> missingYears = missing.get(serie);
+					if (!missingYears.isEmpty()) {
+						writer.newLine();
+						writeString("Missing years for " + serie + " : ");
+						Iterator<Integer> yearItr = missingYears.iterator();
+						
+						while (yearItr.hasNext()) {
+							Integer year = yearItr.next();
+							writeString(year + " ");
+							
+						}
+						
+					}
+ 					
+				}
+				writer.newLine();
+				
 			}
 			
 			

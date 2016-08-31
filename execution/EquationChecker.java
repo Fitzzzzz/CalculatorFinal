@@ -2,12 +2,12 @@ package execution;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Calendar;
 import java.util.Iterator;
 import java.util.LinkedList;
 
 import arithmeticParsing.Parser;
 import binaryTree.TreeBuilder;
-import binaryTree.TreePrinter;
 import equationHandler.Equation;
 import reader.Configuration;
 import reader.CountriesReader;
@@ -20,6 +20,15 @@ import writer.FileCreator;
 public class EquationChecker {
 
 	public static void main(String[] args) {		
+		
+		int endYear;
+		if (args == null) {
+			endYear = Calendar.getInstance().get(Calendar.YEAR);
+		}
+		else {
+			endYear = Integer.parseInt(args[0]);
+		}
+		
 		
 		EquationReader reader;
 
@@ -68,7 +77,7 @@ public class EquationChecker {
 					Equation eq;
 					
 						try {
-							eq = new Equation(current, country, config);
+							eq = new Equation(current, country, config, endYear);
 							Parser tokenParser = new Parser(eq.getTokens());
 
 							TreeBuilder tree = new TreeBuilder(tokenParser.getOutput());
@@ -79,7 +88,8 @@ public class EquationChecker {
 							eq.queryBodyValue(tree);
 
 							current.setErrors(eq.compare());
-
+							current.setMissing(eq.getMissingValues());
+							
 //							eq.printBody();
 
 							eq.printMissingValues();

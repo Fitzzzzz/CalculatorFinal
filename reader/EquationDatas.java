@@ -2,6 +2,8 @@ package reader;
 
 import java.util.Calendar;
 import java.util.LinkedList;
+import java.util.Map;
+import java.util.Set;
 
 import equationHandler.YearValueDuo;
 
@@ -64,6 +66,16 @@ public class EquationDatas {
 	
 	private int argumentsNb;
 	
+	private Map<String, Set<Integer>> missing;
+	
+	public Map<String, Set<Integer>> getMissing() {
+		return missing;
+	}
+
+	public void setMissing(Map<String, Set<Integer>> missing) {
+		this.missing = missing;
+	}
+
 	private LinkedList<YearValueDuo> errors;
 	
 	public LinkedList<YearValueDuo> getErrors() {
