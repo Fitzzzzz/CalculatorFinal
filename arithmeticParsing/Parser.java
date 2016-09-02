@@ -5,22 +5,36 @@ import equationHandler.Token;
 import equationHandler.PriorityToken;
 import equationHandler.Parenthesis;
 
+
+/**
+ * A class handling the arithmetic Parsing of the tokens. It will sort them in prefix order to allow them to later enter a binary tree.
+ * @author hamme
+ *
+ */
 public class Parser {
 
+	/**
+	 * The final result
+	 */
 	private LinkedList<Token> output;
 	
 	public LinkedList<Token> getOutput() {
 		return output;
 	}
 
-
+	/**
+	 * The inputed tokens
+	 */
 	private Token[] equation;
 	
 	public Token[] getEquation() {
 		return equation;
 	}
 	
-	
+	/**
+	 * Will call {@link #convertInfixToPrefix(Token[])} to sort the Tokens in the prefix order
+	 * @param equation The tokens to sort
+	 */
 	public Parser(Token[] equation) {
 		this.equation = equation;
 		output = new LinkedList<Token>();
@@ -28,12 +42,15 @@ public class Parser {
 		
 	}
 	
+	/**
+	 * Sorts infix sorted tokens in a prefix order using the Shunting-yard algorithm.
+	 * @param equation The tokens to sort
+	 */
 	public void convertInfixToPrefix(Token[] equation) {
 		
 		
 		LinkedList<Token> stack = new LinkedList<Token>();
-//		this.printLList(stack);
-//		this.printLList(output);
+
 		for (int i = 0; i < equation.length; i++) {
 			
 			Token tmp = equation[i];
@@ -65,21 +82,17 @@ public class Parser {
 						
 						output.addLast(stack.pop());	
 					}
-					// If no leftParenthesis : BUG 
+
 					stack.pop();
 				}
 			}
-//			System.out.println("-----------------------");
-//			System.out.println("              " + output );
-//			System.out.println(stack );
+
 		}
 		
 		while (!stack.isEmpty()) {
-			// If Parenthesis : BUG
+
 			output.addLast(stack.pop());
-//			System.out.println("----------------------");
-//			System.out.println("              " + output );
-//			System.out.println(stack );
+
 		}
 	}
 	
@@ -88,7 +101,10 @@ public class Parser {
 		return list.toString();
 		
 	}
-	
+	/** 
+	 * Prints the given list of tokens
+	 * @param list tokens to print
+	 */ 
 	public void printLList(LinkedList<Token> list) {
 		System.out.print(list);
 	}

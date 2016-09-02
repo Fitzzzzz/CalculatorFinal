@@ -18,25 +18,70 @@ import databaseQueries.UnexpectedMissingValueException;
 import reader.Configuration;
 import reader.EquationDatas;
 import reader.IncorrectEntryFormatException;
+
+/**
+ * A class handling equations : will detect its type, split it in different tokens and query the different values before making the calcul.
+ * @author hamme
+ *
+ */
 public class Equation {
 
+	/**
+	 * Represents the PLUS token
+	 */
 	public static PriorityToken PLUS = new Operator("+", 1);
+	/**
+	 * Represents the MINUS token
+	 */
 	public static PriorityToken MINUS = new Operator("-", 1);
+	/**
+	 * Represents the MULTIPLY token
+	 */
 	public static PriorityToken MULTIPLY = new Operator("*", 2);
+	/**
+	 * Represents the DIVIDE token
+	 */
 	public static PriorityToken DIVIDE = new Operator("/", 2);
+	/**
+	 * Represents the LEFT PARENTHESIS token
+	 */
 	public static PriorityToken OPENPARENTHESES = new Parenthesis("(" , 4, true);
+	/**
+	 * Represents the RIGHT PARENTHESIS token
+	 */
 	public static PriorityToken CLOSEPARENTHESES = new Parenthesis(")", 4, false);
-	
+	/**
+	 * The country being tested
+	 */
 	private String country;
+	/**
+	 * The unit being tested
+	 */
 	private String unit;
+	/**
+	 * The precision needed for the '= 0' equations.
+	 */
 	private double precision;
-	
+	/**
+	 * The connector to the databse
+	 */
 	private Connector connect;
-	
+	/**
+	 * The equation type : can be either '>', '<' or '='
+	 */
 	private String equationType;
 	
 	
-	
+	/**
+	 * Constructor
+	 * @param datas The informations about the equation
+	 * @param country The country being tested
+	 * @param config The informations to connect to the database
+	 * @param endYear The last year to test
+	 * @throws ClassNotFoundException
+	 * @throws SQLException
+	 * @throws IncorrectEntryFormatException if the equation and its informations aren't correctly formatted.
+	 */
 	public Equation(EquationDatas datas, String country, Configuration config, int endYear) throws ClassNotFoundException, SQLException, IncorrectEntryFormatException {
 		
 		
@@ -46,7 +91,10 @@ public class Equation {
 		this.unit = datas.getUnit();
 		this.equation = datas.getEquation();
 		this.precision = datas.getPrecision();
-		if (equation.contains("=")) {
+		
+		
+		// Testing what kind of equation this is
+		 if (equation.contains("=")) {
 			String[] parts = equation.split("=");
 			this.receiver = parts[1];
 			this.body = parts[0];
@@ -65,11 +113,13 @@ public class Equation {
 			this.equationType = ">";
 		}
 		else {
+			// The equation-type could not be recognized
 			throw new IncorrectEntryFormatException(equation, "Missing an operator ('=', '<' or '>') in the equation : " + equation);
 		}
 		
 		String[] tmp = {body};
 		
+		// Splitting the equation in what will become tokens
 		tmp = this.split(tmp, PLUS);	
 		tmp = this.split(tmp, MINUS);
 		tmp = this.split(tmp, MULTIPLY);
@@ -77,76 +127,119 @@ public class Equation {
 		tmp = this.split(tmp, OPENPARENTHESES);	
 		tmp = this.split(tmp, CLOSEPARENTHESES);	
 		
+		// Creating a connector to the database
 		this.connect = new Connector(unit, country, config);
-		
-		
+		// Creating the tokens out of the split parts of the equation
 		this.tokens = this.convertStringToToken(tmp);
 		
+		// Should ALWAYS be the case
 		if (receiver.equals("0")) {
-					
+			// Creating all the years that will be used		
 			for (int i = datas.getStart(); i <= endYear; i++) {
 				this.years.add(i);
 			}
 			
 		}
+		// Not implemented yet, might be used later to verify equations that aren't compared to 0
 		else {
 			this.queryReceiverValue();
 		}		
 	}
 	
+	/**
+	 * The equation in the form of a String
+	 */
 	private String equation;
 	
 	public String getEquation() {
 		return equation;
 	}
-
+	/**
+	 * Not implemented yet, might be used later to verify equations that aren't compared to 0
+	 */
 	private String receiver;
 	
 	public String getReceiver() {
 		return receiver;
 	}
-	
+	/**
+	 * Not implemented yet, might be used later to verify equations that aren't compared to 0
+	 */
 	private int receiverValue;
 	
 	public int getReceiverValue() {
 		return receiverValue;
 	}
-
+	
+	/**
+	 * Not implemented yet, might be used later to verify equations that aren't compared to 0
+	 */
 	private final Map<Integer, BigDecimal> receiverMap = new HashMap<Integer, BigDecimal>();
 
-	
+	/**
+	 * The part of the equation containing the calculus.
+	 */
 	private String body;
  
  	public String getBody() {
 		return body;
 	}
-
+ 	
+ 	/**
+ 	 * A Map whose keys are the different years tested and the values are the value of the body for those different years.
+ 	 */
  	private final Map<Integer, BigDecimal> bodyMap = new HashMap<Integer, BigDecimal>();
  	
+ 	/**
+ 	 * The array containing all the tokens
+ 	 */
  	private Token[] tokens;
  	
 	public Token[] getTokens() {
 		return tokens;
 	}
 	
+	/**
+	 * The list of the years whose values are going to be tested
+	 */
 	private final List<Integer> years = new LinkedList<Integer>();
 	
  	public List<Integer> getYears() {
 		return years;
 	}
 
+ 	/**
+ 	 * A map whose keys are the different years tested and the values are boolean whose value are true if the calculus gave the expected result, false otherwise.
+ 	 */
 	private final Map<Integer, Boolean> resultMap = new HashMap<Integer, Boolean>();
 
+	/**
+ 	 * A map whose keys are the different years tested and the values are the difference between the expected result and the real result. Not implemented yet, might be useful later to verify equations that aren't compared to 0
+ 	 */
  	private final Map<Integer, BigDecimal> differenceMap = new HashMap<Integer, BigDecimal>();
  	
+ 	/**
+ 	 * A map whose keys are the different series of the equation and each value consists of a set of the years that are missing for the concerned serial.
+ 	 */
  	private final Map<String, Set<Integer>> missingValues = new HashMap<String, Set<Integer>>();
 
  	public Map<String, Set<Integer>> getMissingValues() {
 		return missingValues;
 	}
 
+ 	/**
+ 	 * A set containing the String representation of the different series of the equation.
+ 	 */
 	private final Set<String> series = new HashSet<String>();
 
+	/**
+	 * Will split each value of the array between the given separator if found (each time it is found). 
+	 * Each time it is found, will replace the considered case by three new cases, one containing the left part, the second one containing the separator and the last one containing the right part.
+	 * Uses {@link #mySplit(String, String)} 
+	 * @param toSplit The array whose cases are going to be split if the separator is found.
+	 * @param separator The PriorityToken (operator) that will separate the different parts of the values of the array if found.
+	 * @return A new Array whose cases contain either the same value as before for every case where the separator wasn't found or three new cases each time the separator was found.
+	 */
 	private String[] split(String[] toSplit, PriorityToken separator) {
 		
 		
@@ -156,6 +249,7 @@ public class Equation {
 		String[] tmp2 = new String[0];
 		String[] tmp3;
 		
+		// For each case
 		for (int i = 0; i < toSplit.length; i++) {		
 			
 			tmp = Equation.mySplit(toSplit[i], operator);
@@ -168,6 +262,12 @@ public class Equation {
 		return tmp2;
 	}
 	
+	/**
+	 * Splits a String in three parts each time the regular expression is found inside the String
+	 * @param str The string to search into
+	 * @param regex The regular expression that is being looked for
+	 * @return An array whose cases contain individuals parts of the input String separated by the regular expression if it was found one or more times.
+	 */
 	public static String[] mySplit(String str, String regex) {
 		
 	    Vector<String> result = new Vector<String>();
@@ -188,7 +288,11 @@ public class Equation {
 	    return array;
 	}
 	
-	
+	/**
+	 * Converts an array of String into an array of Tokens
+	 * @param toConvert The array to convert
+	 * @return An array of Tokens corresponding to the input Strings.
+	 */
 	public Token[] convertStringToToken(String[] toConvert) {
 		
 		Token[] converted = new Token[toConvert.length];
@@ -236,7 +340,9 @@ public class Equation {
 	}
 	
 	
-	// To use only if it's an equation, not a calculation (receiver is a serie)
+	/**
+	 * Not used yet. Might be useful later if equation get compared to serials and not '0' as today.
+	 */
 	public void queryReceiverValue() {
 		try {
 			ResultSet rs = connect.query(this.getReceiver());
@@ -255,19 +361,22 @@ public class Equation {
 
 	
 	
-	// queryYears or queryReceiverValue need to have been called
-	// The tree has to be constructed
+	
+	/**
+	 * Will make the calculus of the body part of the equation. 
+	 * Stores values and missing values for the concerned years.
+	 * Needs the binary tree of tokens to have been implemented.
+	 * @param tree The tree of tokens that represents the equation.
+	 */
 	public void queryBodyValue(TreeBuilder tree) {
 		
 		Iterator<Integer> itr = years.iterator();
 		while (itr.hasNext()) {
 			Integer year = itr.next();
-//			System.out.println(year + " : ");
 			try {
 				bodyMap.put(year, tree.postOrderEvaluation(year));
 			} catch (UnexpectedMissingValueException e) {
 				
-//				System.out.println("in queryBodyValue catched UnexpectedMissingValueException");
 				if (missingValues.get(e.getSerie()) == null) {
 					Set<Integer> missingYears = new HashSet<Integer>();
 					missingYears.add(e.getYear());
@@ -281,6 +390,11 @@ public class Equation {
 		}
 	}
 	
+	/**
+	 * Will compare the {@link #bodyMap} to the expected result. 
+	 * Calls either {@link #compareEqual()}, {@link #compareGreater()}, {@link #compareSmaller()} depending on the {@link #equationType}.
+	 * @return the errors (the year-value couples that don't respect the equation)
+	 */
 	public LinkedList<YearValueDuo> compare() {
 		
 		switch (this.equationType) 
@@ -297,48 +411,64 @@ public class Equation {
 		
 	}
 	
+	/**
+	 * Will go thru {@link #bodyMap} using the {@link #years} to test if it is equal to 0.
+	 * @return the errors (the year-value couples that don't respect the equation)
+	 */
 	private LinkedList<YearValueDuo> compareEqual() {
 		
 		Iterator<Integer> itr = years.iterator();
 		LinkedList<YearValueDuo> errors = new LinkedList<YearValueDuo>();
+		
+		// For each couple
 		while (itr.hasNext()) {
+			
 			Integer year = itr.next();
 			BigDecimal value = bodyMap.get(year);
 
-			// if the difference between the expected result and the result is smaller or equal to 0.5
+			
 			if (value != null) {
+				// If the difference between the expected result and the result is smaller than or equal to the expected precision
 				if (value.abs().compareTo(new BigDecimal(this.precision)) <= 0) {
+					// Put it as OK in the resultMap
 					resultMap.put(year, true);
 				}
-				else {
+				// If the difference between the expected result and the result is higher than the expected precision
+			else {
+					// Put it as not OK in the resultMap and add it to the errors Map.
 					resultMap.put(year, false);
 					errors.addLast(new YearValueDuo(year, value));
 				}
 			}
 			
-			// if it's higher
 			
 		}
 		return errors;
 	}
-	
+	/**
+	 * Will go thru {@link #bodyMap} using the {@link #years} to test if it is smaller than 0.
+	 * @return the errors (the year-value couples that don't respect the equation)
+	 */
 	private LinkedList<YearValueDuo> compareSmaller() {
 		
 		Iterator<Integer> itr = years.iterator();
 		
 		LinkedList<YearValueDuo> errors = new LinkedList<YearValueDuo>();
-		
+		// For each couple
 		while (itr.hasNext()) {
 			Integer year = itr.next();
 			BigDecimal value = bodyMap.get(year);
-			// if the difference between the expected result and the result is smaller or equal to 0.5
+			
 			
 			if (value != null) {
+				// If the result is indeed smaller or equal to 0
 				if (value.compareTo(BigDecimal.ZERO) <= 0) {
+					// Put it as OK in the resultMap
 					resultMap.put(year, true);
 				}
-				// if it's higher
+				// If it's higher
 				else {
+					// Put it as not OK in the resultMap and add it to the errors Map.
 					resultMap.put(year, false);
 					errors.addLast(new YearValueDuo(year, value));
 				}
@@ -347,24 +477,29 @@ public class Equation {
 		return errors;
 	}
 	
-	
+	/**
+	 * Will go thru {@link #bodyMap} using the {@link #years} to test if it is equal to 0.
+	 * @return the errors (the year-value couples that don't respect the equation)
+	 */
 	private LinkedList<YearValueDuo> compareGreater() {
 		
 		Iterator<Integer> itr = years.iterator();
 		LinkedList<YearValueDuo> errors = new LinkedList<YearValueDuo>();
 		
+		// For each couple
 		while (itr.hasNext()) {
 			Integer year = itr.next();
-//			System.out.println(year);
 			BigDecimal value = bodyMap.get(year);
-			// if the difference between the expected result and the result is smaller or equal to 0.5
+			
 			if (value != null) {
-				
+				// If the result is indeed bigger or equal to 0
 				if (value.compareTo(BigDecimal.ZERO) >= 0) {
-				resultMap.put(year, true);
+					// Put it as OK in the resultMap
+					resultMap.put(year, true);
 				}
-				// if it's higher
+				// If it's smaller
 				else {
+					// Put it as not OK in the resultMap and add it to the errors Map.
 					resultMap.put(year, false);
 					errors.addLast(new YearValueDuo(year, value));
 				}
@@ -373,6 +508,9 @@ public class Equation {
 		return errors;
 	}
 	
+	/**
+	 * Prints the {@link #resultMap} and the {@link #differenceMap}
+	 */
 	public void printComparaison() {
 		Iterator<Integer> itr = years.iterator();
 		while (itr.hasNext()) {
@@ -383,7 +521,9 @@ public class Equation {
 		
 	}
 
-	
+	/**
+	 * Prints the {@link #bodyMap}
+	 */
 	public void printBody() {
 		
 		System.out.println("printBody starting");
@@ -395,6 +535,9 @@ public class Equation {
 		
 	}
 	
+	/**
+	 * Prints the {@link #printMissingValues()}
+	 */
 	public void printMissingValues() {
 		
 		Iterator<String> itr = series.iterator();
@@ -415,6 +558,10 @@ public class Equation {
 		
 	}
 	
+	/**
+	 * Closes the connection with the database.
+	 * @throws SQLException
+	 */
 	public void closeConnection() throws SQLException {
 		this.connect.close();
 	}

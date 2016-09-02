@@ -3,8 +3,6 @@ package execution;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
 
 import databaseQueries.Connector;
 import reader.Configuration;
@@ -18,18 +16,15 @@ public class NegativeChecker {
 
 	public static void main(String[] args) {
 		
-		long startTime = System.nanoTime();
-		String exceptFile = "negativCountries.txt";
-		
-		long controlEnd = System.nanoTime();
 
+		// The file that contains the negative exceptions
+		String exceptFile = "negativeExceptions.txt";
+		
+
+		// Read the exceptFile
 		ExceptionsReader exceptionReader = new ExceptionsReader(exceptFile);
-		long queryNegativStart = 0;
-		long queryNegativEnd = 0;
-		long writeStart = 0;
-		long writeEnd = 0;
-		
-		
+
+		// Reading the configuration file
 		Configuration config = null;
 		try {
 			config = new Configuration("configuration.txt");
@@ -42,32 +37,27 @@ public class NegativeChecker {
 			
 			
 			
-					
+			// Read the exceptfile
 			HashSet<String> exceptions = exceptionReader.readAllFile();
+			// Create a connection
 			Connector connection = new Connector(config);
 			
-			queryNegativStart = System.nanoTime();
 			RSParser parser;
 			
-			LinkedList<String> countries = CountriesReader.readCountriesTP("equationCountries.txt");
-			Iterator<String> countryItr = countries.iterator();
 			
-			String country = countryItr.next();
-			
-			if (country.equals("TP")) {
-				
+			// If all countries should be checked
+			if (CountriesReader.isItTP("equationCountries.txt")) {
 				parser = new RSParser(connection.queryAllNegativ(exceptions));
-				
 			}
-			
+			// Else (if just some countries are asked to be checked)
 			else {
-				
-				parser = new RSParser(connection.queryCountriesNegativ(exceptions, countries));
-				
+				parser = new RSParser(connection.queryCountriesNegativ(exceptions, CountriesReader.readCountries("equationCountries.txt")));
 			}
 			
-			queryNegativEnd = System.nanoTime();
 
+			
+
+			// Write the result in an output file
 			FileCreator exceptionCreated = new FileCreator(exceptFile);
 			exceptionCreated.writeCountryFirst(parser.sortCountryFirst());
 			
@@ -92,15 +82,9 @@ public class NegativeChecker {
 		
 		
 		
-		long stopTime = System.nanoTime();
+
 		
-		System.out.println("Temps controle = " + ((controlEnd - startTime)/1000000000));
-		System.out.println("Temps negativ = " + ((stopTime - controlEnd)/1000000000));
-		System.out.println("Temps query negativ = " + ((queryNegativEnd - queryNegativStart)/1000000000));
-		System.out.println("Temps ecriture negative et parsing = " + ((writeEnd - writeStart)/1000000000));
-		System.out.println("Temps total = " + ((stopTime - startTime)/1000000000));
-		
-		
+
 	}
 	
 	

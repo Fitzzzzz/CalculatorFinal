@@ -4,16 +4,25 @@ import java.util.LinkedList;
 
 import equationHandler.YearValueDuo;
 
+/**
+ * A class storing the negative exceptions data for a country/serial/Unit trio.
+ * @author hamme
+ *
+ */
 public class CountryFirstData implements Comparable<Object> {
 
-	
+	/**
+	 * The country-code
+	 */
 	private String countryCode;
 	
 	public String getCountryCode() {
 		return countryCode;
 	}
 
-
+	/**
+	 * The name of the country
+	 */
 	private String countryName;
 	public String getCountry() {
 		return countryName;
@@ -34,12 +43,27 @@ public class CountryFirstData implements Comparable<Object> {
 		return duo;
 	}
 
-
+	/** 
+	 * The serial
+	 */
 	private String serie;
+	/**
+	 * It's unit
+	 */
 	private String unit;
+	
+	/**
+	 * The linked list of negative Year-Value couples
+	 */
 	private final LinkedList<YearValueDuo> duo = new LinkedList<YearValueDuo>();
 	
-	
+	/**
+	 * Constructor
+	 * @param countryName
+	 * @param countryCode
+	 * @param serie
+	 * @param unit
+	 */
 	public CountryFirstData(String countryName, String countryCode, String serie, String unit) {
 		
 		super();
@@ -89,7 +113,9 @@ public class CountryFirstData implements Comparable<Object> {
 		return true;
 	}
 
-
+	/**
+	 * Sorts the {@link #CountryFirstData} alphabetically by country first, then by serial, then by unit to write them off easier later
+	 */
 	@Override
 	public int compareTo(Object arg0) {
 		

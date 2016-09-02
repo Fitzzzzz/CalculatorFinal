@@ -24,9 +24,20 @@ import reader.Configuration;
 import reader.EquationDatas;
 import resultSetParser.CountryFirstData;
 
+/**
+ * A class dedicated to writing in files.
+ * @author hamme
+ *
+ */
 public class FileCreator {
 
+	/**
+	 * The writer
+	 */
 	private BufferedWriter writer;
+	/**
+	 * The name of the file to write in
+	 */
 	private String fileName;
 
 	public FileCreator(String fileName) throws IOException {
@@ -36,6 +47,15 @@ public class FileCreator {
 
 	}
 	
+	
+	/**
+	 * Will go thru the equations searching for the errors and the missing values and will write them off for the given country.
+	 * Gets called by the EquationChecker.
+	 * @param equations The equations to go thru
+	 * @param countryCode The country code
+	 * @param config The configuration file to connect to the database
+	 * @throws IOException
+	 */
 	public void write(LinkedList<EquationDatas> equations, String countryCode, Configuration config) throws IOException {
 		
 		OpenOption[] options = {StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.APPEND};
@@ -153,9 +173,13 @@ public class FileCreator {
 	}
 	
 
+	/**
+	 * Will write off the negative exceptions that were found. Gets called by NegativeChecker.
+	 * @param list the list of data to go thru
+	 * @throws IOException
+	 */
 	public void writeCountryFirst(List<CountryFirstData> list) throws IOException {
-	
-		long writeCountryFirstStart = System.nanoTime();
+
 
 		OpenOption[] options = {StandardOpenOption.CREATE, StandardOpenOption.WRITE};
 		Charset charset = Charset.forName("UTF-8");
@@ -168,7 +192,7 @@ public class FileCreator {
 	    
 	    Iterator<CountryFirstData> itr = list.iterator();
 	    
-	    // CHECK IF FIRST NOT MISSING !
+
 	    
 	    while(itr.hasNext()) {
 	    	
@@ -188,7 +212,6 @@ public class FileCreator {
     		Collections.sort(duo);
     		Iterator<YearValueDuo> duoItr = duo.iterator();
     		
-    		// CHECK IF FIRST NOT MISSING
     		while (duoItr.hasNext()) {
     			YearValueDuo currentDuo = duoItr.next();
     			writer.newLine();
@@ -207,14 +230,6 @@ public class FileCreator {
     			
     			writeString(toWrite);
     			
-//	    		writeString(current.getSerie()
-//	    				+ "                  " 
-//	    				+ current.getUnit() 
-//	    				+ "                  " 
-//	    				+ currentDuo.getYear() 
-//	    				+ "                  " 
-//	    				+ currentDuo.getValue());
-	    		
 
     		}
     		writer.newLine();
@@ -222,10 +237,15 @@ public class FileCreator {
 	    }
 	    
 	    writer.close();
-	    long writeCountryFirstEnd = System.nanoTime();
-		System.out.println("Temps writeCountry = " + ((writeCountryFirstEnd - writeCountryFirstStart)/1000000000));
+
 	}
-	
+
+	/**
+	 * Used to calculate the space to leave between values.
+	 * @param previousLength
+	 * @param defaultSpaceLength
+	 * @return
+	 */
 	private String calculateSpace(int previousLength, int defaultSpaceLength) {
 		
 		String space = "";
@@ -234,6 +254,11 @@ public class FileCreator {
 		return space;
 	}
 	
+	/**
+	 * Writes the msg.
+	 * @param msg
+	 * @throws IOException
+	 */
 	public void writeString(String msg) throws IOException {
 		
 		writer.write(msg);

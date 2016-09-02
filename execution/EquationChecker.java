@@ -21,6 +21,7 @@ public class EquationChecker {
 
 	public static void main(String[] args) {		
 		
+		// Setting up the endYear
 		int endYear;
 		if (args.length == 0) {
 			endYear = Calendar.getInstance().get(Calendar.YEAR);
@@ -35,6 +36,7 @@ public class EquationChecker {
 		// The countries to check
 		LinkedList<String> countries = null;
 		
+		// Reading configuration.txt to acquire informations concerning the database
 		Configuration config = null;
 		try {
 			config = new Configuration("configuration.txt");
@@ -44,7 +46,7 @@ public class EquationChecker {
 		}
 		
 		
-		
+		// Reading the countries from equationCountries.txt
 		try {
 			countries = CountriesReader.readCountries("equationCountries.txt");
 		} catch (IncorrectCountryEntryException e1) {
@@ -58,18 +60,22 @@ public class EquationChecker {
 		
 		
 		try {
+			// Reading the "equations.txt" file to retrieve the equations and their parameters.
 			reader = new EquationReader(config);
 			String fileName = "CTREnergie.txt";
 			FileCreator writer = new FileCreator(fileName);
 			
+			// Iterating on the countries.
 			Iterator<String> countryItr = countries.iterator();
 			
+			// For each country
 			while (countryItr.hasNext()) {
 				
 				String country = countryItr.next();
+				// Iterating on the equations
 				Iterator<EquationDatas> itr = reader.getEquations().iterator();
 				
-				
+				// For each equation
 				while (itr.hasNext()) {
 					
 					EquationDatas current = itr.next();
@@ -77,23 +83,24 @@ public class EquationChecker {
 					Equation eq;
 					
 						try {
+							// Create a new Equation to handle it.
 							eq = new Equation(current, country, config, endYear);
+							
+							// Parse the precedent created tokens. Will sort them in the prefix order.
 							Parser tokenParser = new Parser(eq.getTokens());
-
+							// Now that the tokens are in prefix order, we can build a tree containing them :
 							TreeBuilder tree = new TreeBuilder(tokenParser.getOutput());
 							
-//							TreePrinter.print(tree.getTree());
 							
-
+							// Will go thru the tree to evaluate the equation
 							eq.queryBodyValue(tree);
 
+							// Getting the errors
 							current.setErrors(eq.compare());
+							// Getting the missing values
 							current.setMissing(eq.getMissingValues());
 							
-//							eq.printBody();
-
-//							eq.printMissingValues();
-							
+							// Closing the connection.
 							eq.closeConnection();
 							
 							
@@ -107,7 +114,7 @@ public class EquationChecker {
 						
 				}
 			
-				
+				// Writing in the output file the results
 				writer.write(reader.getEquations(), country, config);
 				
 				
